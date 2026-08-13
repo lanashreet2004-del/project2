@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_theme_context.dart';
 
 class ResultMetadataRow extends StatelessWidget {
   const ResultMetadataRow({
@@ -14,8 +15,8 @@ class ResultMetadataRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final confidencePercent = (confidence * 100).clamp(0, 100).toStringAsFixed(0);
+    final confidencePercent =
+        (confidence * 100).clamp(0, 100).toStringAsFixed(0);
     final dateLabel = _formatDateTime(processedAt);
 
     return Row(
@@ -23,28 +24,28 @@ class ResultMetadataRow extends StatelessWidget {
         Expanded(
           child: _MetaChip(
             icon: Icons.verified_outlined,
-            label: 'Confidence',
+            label: 'result.confidence'.tr,
             value: '$confidencePercent%',
-            color: _confidenceColor(confidence),
+            color: _confidenceColor(context, confidence),
           ),
         ),
         const SizedBox(width: 12),
         Expanded(
           child: _MetaChip(
             icon: Icons.schedule_outlined,
-            label: 'Processed',
+            label: 'result.processed'.tr,
             value: dateLabel,
-            color: theme.colorScheme.primary,
+            color: context.colors.primary,
           ),
         ),
       ],
     );
   }
 
-  Color _confidenceColor(double value) {
-    if (value >= 0.8) return AppColors.success;
-    if (value >= 0.5) return AppColors.warning;
-    return AppColors.error;
+  Color _confidenceColor(BuildContext context, double value) {
+    if (value >= 0.8) return context.appColors.success;
+    if (value >= 0.5) return context.appColors.warning;
+    return context.colors.error;
   }
 
   String _formatDateTime(DateTime dateTime) {
@@ -84,18 +85,18 @@ class _MetaChip extends StatelessWidget {
                 const SizedBox(width: 6),
                 Text(
                   label,
-                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
+                  style: context.texts.labelMedium?.copyWith(
+                    color: context.colors.onSurfaceVariant,
+                  ),
                 ),
               ],
             ),
             const SizedBox(height: 6),
             Text(
               value,
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
+              style: context.texts.titleSmall?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ],
         ),

@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../controllers/result_controller.dart';
-import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_theme_context.dart';
 import '../../core/widgets/async_state_builder.dart';
 import '../../core/widgets/responsive_layout.dart';
+import '../../core/widgets/wavy_app_bar.dart';
 import 'widgets/result_extracted_text_card.dart';
 import 'widgets/result_image_preview.dart';
 import 'widgets/result_metadata_row.dart';
@@ -16,10 +17,9 @@ class ResultView extends GetView<ResultController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.homeBackground,
-      appBar: AppBar(
-        title: const Text('Result'),
-        centerTitle: true,
+      backgroundColor: context.colors.surfaceContainerLowest,
+      appBar: WavyAppBar(
+        title: Text('result.title'.tr),
       ),
       body: Obx(
         () => AsyncStateBuilder(
@@ -30,7 +30,31 @@ class ResultView extends GetView<ResultController> {
             final result = controller.result.value;
 
             if (result == null) {
-              return const Center(child: Text('No result available'));
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(32),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.description_outlined,
+                        size: 56,
+                        color: context.colors.primary.withValues(alpha: 0.7),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'result.noResultTitle'.tr,
+                        style: const TextStyle(fontWeight: FontWeight.w700),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'result.noResultBody'.tr,
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+              );
             }
 
             return ResponsiveContainer(
@@ -57,26 +81,25 @@ class ResultView extends GetView<ResultController> {
                               ? null
                               : controller.saveDocument,
                           icon: controller.isSaving.value
-                              ? const SizedBox(
+                              ? SizedBox(
                                   width: 20,
                                   height: 20,
                                   child: CircularProgressIndicator(
                                     strokeWidth: 2,
-                                    color: Colors.white,
+                                    color: context.colors.onPrimary,
                                   ),
                                 )
                               : const Icon(Icons.save_outlined),
                           label: Text(
                             controller.isSaving.value
-                                ? 'Saving...'
-                                : 'Save Document',
+                                ? 'common.saving'.tr
+                                : 'result.saveDocument'.tr,
                             style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
                           style: FilledButton.styleFrom(
-                            backgroundColor: AppColors.accent,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(14),
                             ),
@@ -90,9 +113,9 @@ class ResultView extends GetView<ResultController> {
                       child: OutlinedButton.icon(
                         onPressed: controller.openTextEditor,
                         icon: const Icon(Icons.edit_outlined),
-                        label: const Text(
-                          'Edit Text',
-                          style: TextStyle(
+                        label: Text(
+                          'result.editText'.tr,
+                          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                           ),

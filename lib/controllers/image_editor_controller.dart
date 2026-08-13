@@ -41,7 +41,7 @@ class ImageEditorController extends BaseController {
     pickSource.value = ImagePickSource.fromString(args?['source'] as String?);
 
     if (path == null) {
-      setError('No image selected');
+      setError('editor.noImageSelected'.tr);
       return;
     }
 
@@ -125,8 +125,8 @@ class ImageEditorController extends BaseController {
       brightness.value = 1.0;
     } else if (hasError) {
       Get.snackbar(
-        'Retake',
-        errorMessage.value ?? 'Could not pick image',
+        'editor.retakeTitle'.tr,
+        errorMessage.value ?? 'home.pickFailed'.tr,
         snackPosition: SnackPosition.BOTTOM,
       );
     }
@@ -143,7 +143,8 @@ class ImageEditorController extends BaseController {
     if (finalPath == null) return;
 
     _uploadController.setEditedImage(finalPath, source: pickSource.value);
-    Get.toNamed(AppRoutes.processing);
+    // Replace editor so back from Result returns to Home, not the editor.
+    Get.offNamed(AppRoutes.processing);
   }
 }
 
@@ -165,21 +166,22 @@ class _CropOptionsSheet extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            Text('Crop Style', style: Theme.of(context).textTheme.titleMedium),
+            Text('editor.cropStyle'.tr,
+                style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 12),
             ListTile(
               leading: const Icon(Icons.crop_free),
-              title: const Text('Free crop'),
+              title: Text('editor.cropFree'.tr),
               onTap: () => Get.back(result: 'free'),
             ),
             ListTile(
               leading: const Icon(Icons.crop_square),
-              title: const Text('Square'),
+              title: Text('editor.cropSquare'.tr),
               onTap: () => Get.back(result: 'square'),
             ),
             ListTile(
               leading: const Icon(Icons.aspect_ratio),
-              title: const Text('Original ratio'),
+              title: Text('editor.cropOriginal'.tr),
               onTap: () => Get.back(result: 'original'),
             ),
           ],

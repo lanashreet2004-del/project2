@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_theme_context.dart';
 
 class JsonCodeBlock extends StatelessWidget {
   const JsonCodeBlock({
@@ -12,8 +13,6 @@ class JsonCodeBlock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Card(
       clipBehavior: Clip.antiAlias,
       child: Container(
@@ -25,7 +24,7 @@ class JsonCodeBlock extends StatelessWidget {
           child: SingleChildScrollView(
             child: SelectableText(
               jsonText,
-              style: theme.textTheme.bodyMedium?.copyWith(
+              style: context.texts.bodyMedium?.copyWith(
                 fontFamily: 'monospace',
                 fontFamilyFallback: const ['Courier New', 'monospace'],
                 color: const Color(0xFFCDD6F4),
@@ -54,10 +53,10 @@ class JsonPreviewHeader extends StatelessWidget {
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                color: AppColors.iconBgPurple,
+                color: context.appColors.iconSoft,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Icon(Icons.data_object, color: AppColors.accent),
+              child: Icon(Icons.data_object, color: context.colors.primary),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -65,17 +64,17 @@ class JsonPreviewHeader extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Export Payload Preview',
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.w700,
-                        ),
+                    'jsonPreview.headerTitle'.tr,
+                    style: context.texts.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Review and validate JSON before saving or sharing.',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: AppColors.textSecondary,
-                        ),
+                    'jsonPreview.headerSubtitle'.tr,
+                    style: context.texts.bodySmall?.copyWith(
+                      color: context.colors.onSurfaceVariant,
+                    ),
                   ),
                 ],
               ),

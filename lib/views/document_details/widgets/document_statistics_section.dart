@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_theme_context.dart';
 
 class DocumentStatisticsSection extends StatelessWidget {
   const DocumentStatisticsSection({
@@ -16,8 +17,6 @@ class DocumentStatisticsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -25,8 +24,8 @@ class DocumentStatisticsSection extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Document Statistics',
-              style: theme.textTheme.titleMedium?.copyWith(
+              'details.statistics'.tr,
+              style: context.texts.titleMedium?.copyWith(
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -35,7 +34,7 @@ class DocumentStatisticsSection extends StatelessWidget {
               children: [
                 Expanded(
                   child: _StatTile(
-                    label: 'Characters',
+                    label: 'details.characters'.tr,
                     value: characters.toString(),
                     icon: Icons.text_fields_outlined,
                   ),
@@ -43,7 +42,7 @@ class DocumentStatisticsSection extends StatelessWidget {
                 const SizedBox(width: 10),
                 Expanded(
                   child: _StatTile(
-                    label: 'Words',
+                    label: 'details.words'.tr,
                     value: words.toString(),
                     icon: Icons.short_text_outlined,
                   ),
@@ -51,7 +50,7 @@ class DocumentStatisticsSection extends StatelessWidget {
                 const SizedBox(width: 10),
                 Expanded(
                   child: _StatTile(
-                    label: 'Lines',
+                    label: 'details.lines'.tr,
                     value: lines.toString(),
                     icon: Icons.format_line_spacing_outlined,
                   ),
@@ -81,26 +80,26 @@ class _StatTile extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
       decoration: BoxDecoration(
-        color: AppColors.iconBgPurple.withValues(alpha: 0.45),
+        color: context.appColors.iconSoft.withValues(alpha: 0.45),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
         children: [
-          Icon(icon, size: 20, color: AppColors.accent),
+          Icon(icon, size: 20, color: context.colors.primary),
           const SizedBox(height: 8),
           Text(
             value,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.accent,
-                ),
+            style: context.texts.titleMedium?.copyWith(
+              fontWeight: FontWeight.w700,
+              color: context.colors.primary,
+            ),
           ),
           const SizedBox(height: 4),
           Text(
             label,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: AppColors.textSecondary,
-                ),
+            style: context.texts.labelSmall?.copyWith(
+              color: context.colors.onSurfaceVariant,
+            ),
           ),
         ],
       ),

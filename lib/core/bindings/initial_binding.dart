@@ -9,12 +9,16 @@ import '../../repositories/upload_repository.dart';
 import '../../controllers/upload_controller.dart';
 import '../../repositories/auth_repository.dart';
 import '../../repositories/json_export_repository.dart';
+import '../../repositories/json_files_repository.dart';
 import '../../repositories/pdf_export_repository.dart';
+import '../../repositories/pdf_files_repository.dart';
 import '../../repositories/word_export_repository.dart';
+import '../../repositories/word_files_repository.dart';
 import '../../repositories/onboarding_repository.dart';
 import '../../repositories/text_edit_repository.dart';
 import '../services/api_service.dart';
 import '../services/storage_service.dart';
+import '../localization/locale_controller.dart';
 
 /// Registers global services and repositories for dependency injection.
 class InitialBinding extends Bindings {
@@ -22,6 +26,10 @@ class InitialBinding extends Bindings {
   void dependencies() {
     Get.put<ApiService>(ApiService(), permanent: true);
     Get.put<StorageService>(StorageService(), permanent: true);
+    Get.put<LocaleController>(
+      LocaleController(storageService: Get.find<StorageService>()),
+      permanent: true,
+    );
 
     Get.lazyPut<TextEditRepository>(
       () => TextEditRepository(
@@ -111,6 +119,14 @@ class InitialBinding extends Bindings {
       fenix: true,
     );
 
+    Get.lazyPut<JsonFilesRepository>(
+      () => JsonFilesRepository(
+        apiService: Get.find<ApiService>(),
+        storageService: Get.find<StorageService>(),
+      ),
+      fenix: true,
+    );
+
     Get.lazyPut<PdfExportRepository>(
       () => PdfExportRepository(
         apiService: Get.find<ApiService>(),
@@ -119,8 +135,24 @@ class InitialBinding extends Bindings {
       fenix: true,
     );
 
+    Get.lazyPut<PdfFilesRepository>(
+      () => PdfFilesRepository(
+        apiService: Get.find<ApiService>(),
+        storageService: Get.find<StorageService>(),
+      ),
+      fenix: true,
+    );
+
     Get.lazyPut<WordExportRepository>(
       () => WordExportRepository(
+        apiService: Get.find<ApiService>(),
+        storageService: Get.find<StorageService>(),
+      ),
+      fenix: true,
+    );
+
+    Get.lazyPut<WordFilesRepository>(
+      () => WordFilesRepository(
         apiService: Get.find<ApiService>(),
         storageService: Get.find<StorageService>(),
       ),

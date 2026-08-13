@@ -270,6 +270,10 @@ class WordExportRepository extends BaseRepository {
     return '$day/$month/$year - $hour:$minute';
   }
 
+  String documentTitleOf(HistoryModel document) {
+    return _documentTitle(document.extractedText);
+  }
+
   String _documentTitle(String extractedText) {
     final trimmed = extractedText.trim();
     if (trimmed.isEmpty) return 'Untitled Document';

@@ -1,8 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_theme_context.dart';
 import '../../../models/history_model.dart';
 
 class DocumentItemTile extends StatelessWidget {
@@ -19,11 +20,10 @@ class DocumentItemTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final confidencePercent =
         (item.confidence * 100).clamp(0, 100).toStringAsFixed(0);
     final preview = item.extractedText.trim().isEmpty
-        ? 'No text'
+        ? 'common.noText'.tr
         : item.extractedText.replaceAll('\n', ' ');
 
     return Card(
@@ -46,14 +46,14 @@ class DocumentItemTile extends StatelessWidget {
                         Icon(
                           Icons.schedule_outlined,
                           size: 14,
-                          color: AppColors.textSecondary,
+                          color: context.colors.onSurfaceVariant,
                         ),
                         const SizedBox(width: 4),
                         Expanded(
                           child: Text(
                             _formatDateTime(item.createdAt),
-                            style: theme.textTheme.labelMedium?.copyWith(
-                              color: AppColors.textSecondary,
+                            style: context.texts.labelMedium?.copyWith(
+                              color: context.colors.onSurfaceVariant,
                             ),
                           ),
                         ),
@@ -63,13 +63,13 @@ class DocumentItemTile extends StatelessWidget {
                             vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: theme.colorScheme.primaryContainer,
+                            color: context.colors.primaryContainer,
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
                             '$confidencePercent%',
-                            style: theme.textTheme.labelSmall?.copyWith(
-                              color: theme.colorScheme.onPrimaryContainer,
+                            style: context.texts.labelSmall?.copyWith(
+                              color: context.colors.onPrimaryContainer,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -84,7 +84,7 @@ class DocumentItemTile extends StatelessWidget {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.right,
-                        style: theme.textTheme.bodyMedium?.copyWith(
+                        style: context.texts.bodyMedium?.copyWith(
                           height: 1.5,
                         ),
                       ),
@@ -95,8 +95,8 @@ class DocumentItemTile extends StatelessWidget {
               IconButton(
                 onPressed: onDelete,
                 icon: const Icon(Icons.delete_outline),
-                color: AppColors.error,
-                tooltip: 'Delete',
+                color: context.colors.error,
+                tooltip: 'common.delete'.tr,
               ),
             ],
           ),
@@ -127,14 +127,17 @@ class _DocumentThumbnail extends StatelessWidget {
       child: Container(
         width: 72,
         height: 72,
-        color: AppColors.iconBgPurple,
+        color: context.appColors.iconSoft,
         child: imagePath.isNotEmpty && File(imagePath).existsSync()
             ? Image.file(
                 File(imagePath),
                 fit: BoxFit.cover,
                 errorBuilder: (_, __, ___) => const Icon(Icons.image_outlined),
               )
-            : const Icon(Icons.image_outlined, color: AppColors.textSecondary),
+            : Icon(
+                Icons.image_outlined,
+                color: context.colors.onSurfaceVariant,
+              ),
       ),
     );
   }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
-/// Sun illustration for the welcome card.
+import '../../../core/theme/app_theme_context.dart';
+
+/// Sun illustration for the welcome card — uses theme gold accent.
 class SunIllustration extends StatelessWidget {
   const SunIllustration({super.key, this.size = 80});
 
@@ -8,6 +10,9 @@ class SunIllustration extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final gold = context.appColors.accent;
+    final goldSoft = context.colors.tertiaryContainer;
+
     return SizedBox(
       width: size,
       height: size,
@@ -22,7 +27,7 @@ class SunIllustration extends StatelessWidget {
                 height: size * 0.35,
                 margin: EdgeInsets.only(bottom: size * 0.55),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFFC107),
+                  color: gold.withValues(alpha: 0.85),
                   borderRadius: BorderRadius.circular(3),
                 ),
               ),
@@ -31,9 +36,10 @@ class SunIllustration extends StatelessWidget {
           Container(
             width: size * 0.55,
             height: size * 0.55,
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Color(0xFFFFD54F),
+              color: gold,
+              border: Border.all(color: goldSoft, width: 3),
             ),
           ),
         ],

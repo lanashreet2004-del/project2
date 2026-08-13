@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_theme_context.dart';
 import 'sun_illustration.dart';
 
 /// Welcome greeting card with dynamic username.
@@ -20,7 +21,7 @@ class WelcomeCardWidget extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       decoration: BoxDecoration(
-        color: AppColors.welcomeCardBg,
+        color: context.appColors.brandSoft,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -30,27 +31,27 @@ class WelcomeCardWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  greeting,
-                  style: TextStyle(
-                    fontSize: 15,
-                    color: AppColors.textSecondary.withValues(alpha: 0.9),
+                  greeting.tr,
+                  style: context.texts.bodyMedium?.copyWith(
+                    color: context.colors.onSurfaceVariant,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
                 const SizedBox(height: 6),
                 RichText(
                   text: TextSpan(
-                    style: const TextStyle(
-                      fontSize: 20,
-                      color: Colors.black87,
+                    style: context.texts.headlineSmall?.copyWith(
+                      color: context.colors.onSurface,
                       fontWeight: FontWeight.w700,
                       height: 1.3,
                     ),
                     children: [
-                      const TextSpan(text: 'Welcome, '),
+                      TextSpan(text: 'home.welcome'.tr),
                       TextSpan(
-                        text: username,
-                        style: const TextStyle(color: AppColors.nameHighlight),
+                        text: username == 'common.guest'
+                            ? 'common.guest'.tr
+                            : username,
+                        style: TextStyle(color: context.appColors.accent),
                       ),
                     ],
                   ),

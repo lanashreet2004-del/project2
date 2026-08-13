@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 /// Large image preview with live brightness filter.
 class ImageEditorPreview extends StatelessWidget {
@@ -24,7 +25,7 @@ class ImageEditorPreview extends StatelessWidget {
           color: Theme.of(context).colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(16),
         ),
-        child: const Center(child: Text('No image to edit')),
+        child: Center(child: Text('editor.noImage'.tr)),
       );
     }
 

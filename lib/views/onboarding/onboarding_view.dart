@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../controllers/onboarding_controller.dart';
-import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_theme_context.dart';
 import '../../core/widgets/page_indicator.dart';
 
 /// Onboarding screen with swipeable pages — UI only.
@@ -30,7 +30,8 @@ class OnboardingView extends GetView<OnboardingController> {
       onPageChanged: controller.onPageChanged,
       itemBuilder: (context, index) {
         final width = MediaQuery.sizeOf(context).width;
-        final cacheWidth = (width * MediaQuery.devicePixelRatioOf(context)).round();
+        final cacheWidth =
+            (width * MediaQuery.devicePixelRatioOf(context)).round();
         return Image.asset(
           OnboardingController.pageImages[index],
           fit: BoxFit.cover,
@@ -55,14 +56,16 @@ class OnboardingView extends GetView<OnboardingController> {
             child: TextButton(
               onPressed: controller.isLoading.value ? null : controller.skip,
               style: TextButton.styleFrom(
+                // Photo overlay chrome — stays high-contrast on any image.
                 foregroundColor: Colors.white,
                 backgroundColor: Colors.black.withValues(alpha: 0.25),
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
               ),
-              child: const Text('Skip'),
+              child: Text('onboarding.skip'.tr),
             ),
           ),
         ),
@@ -93,24 +96,25 @@ class OnboardingView extends GetView<OnboardingController> {
                         ? null
                         : controller.nextPage,
                     style: FilledButton.styleFrom(
-                      backgroundColor: AppColors.accent,
                       disabledBackgroundColor:
-                          AppColors.accent.withValues(alpha: 0.6),
+                          context.colors.primary.withValues(alpha: 0.6),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(14),
                       ),
                     ),
                     child: controller.isLoading.value
-                        ? const SizedBox(
+                        ? SizedBox(
                             width: 24,
                             height: 24,
                             child: CircularProgressIndicator(
                               strokeWidth: 2.5,
-                              color: Colors.white,
+                              color: context.colors.onPrimary,
                             ),
                           )
                         : Text(
-                            controller.isLastPage ? 'Start Now' : 'Next',
+                            controller.isLastPage
+                                ? 'onboarding.startNow'.tr
+                                : 'onboarding.next'.tr,
                             style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,

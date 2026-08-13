@@ -3,6 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../core/theme/app_theme_context.dart';
+import '../../core/widgets/wavy_app_bar.dart';
+
 class DocumentImagePreviewView extends StatelessWidget {
   const DocumentImagePreviewView({super.key});
 
@@ -12,12 +15,9 @@ class DocumentImagePreviewView extends StatelessWidget {
     final imagePath = args?['imagePath'] as String? ?? '';
 
     return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        foregroundColor: Colors.white,
-        title: const Text('Document Preview'),
-        centerTitle: true,
+      backgroundColor: context.colors.surfaceContainerLowest,
+      appBar: WavyAppBar(
+        title: Text('details.preview'.tr),
       ),
       body: Center(
         child: imagePath.isNotEmpty && File(imagePath).existsSync()
@@ -27,16 +27,16 @@ class DocumentImagePreviewView extends StatelessWidget {
                 child: Image.file(
                   File(imagePath),
                   fit: BoxFit.contain,
-                  errorBuilder: (_, __, ___) => const Icon(
+                  errorBuilder: (_, __, ___) => Icon(
                     Icons.broken_image_outlined,
-                    color: Colors.white54,
+                    color: context.colors.onSurfaceVariant,
                     size: 64,
                   ),
                 ),
               )
-            : const Icon(
+            : Icon(
                 Icons.image_not_supported_outlined,
-                color: Colors.white54,
+                color: context.colors.onSurfaceVariant,
                 size: 64,
               ),
       ),

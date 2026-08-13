@@ -7,19 +7,23 @@ import 'package:get/get.dart';
 import '../models/json_export_validation_result.dart';
 import '../models/json_preview_args.dart';
 import '../repositories/json_export_repository.dart';
+import '../repositories/json_files_repository.dart';
 import 'base_controller.dart';
 
 /// Presentation logic for JSON preview, validation, and export actions.
 class JsonPreviewController extends BaseController {
   JsonPreviewController({
     required JsonExportRepository repository,
+    required JsonFilesRepository jsonFilesRepository,
     required JsonPreviewArgs args,
   })  : _repository = repository,
+        _jsonFilesRepository = jsonFilesRepository,
         _args = args {
     _initializePreview();
   }
 
   final JsonExportRepository _repository;
+  final JsonFilesRepository _jsonFilesRepository;
   final JsonPreviewArgs _args;
 
   late final Map<String, dynamic> payload;
@@ -48,8 +52,8 @@ class JsonPreviewController extends BaseController {
   Future<void> copyJson() async {
     await Clipboard.setData(ClipboardData(text: prettyJson));
     Get.snackbar(
-      'Copied',
-      'JSON copied to clipboard.',
+      'jsonPreview.copiedTitle'.tr,
+      'jsonPreview.copiedBody'.tr,
       snackPosition: SnackPosition.BOTTOM,
     );
   }
@@ -72,16 +76,26 @@ class JsonPreviewController extends BaseController {
 
       if (file == null) {
         Get.snackbar(
-          'Export JSON',
-          'Could not export JSON file.',
+          'jsonPreview.export'.tr,
+          'jsonPreview.exportFailed'.tr,
           snackPosition: SnackPosition.BOTTOM,
         );
         return;
       }
 
+      try {
+        await _jsonFilesRepository.registerExportedJson(
+          file: file,
+          document: _args.document,
+          documentTitle: _documentTitle(_args.document.extractedText),
+        );
+      } catch (_) {
+        // Export succeeded; library registration failure should not block UX.
+      }
+
       Get.snackbar(
-        'Export JSON',
-        'JSON exported successfully',
+        'jsonPreview.export'.tr,
+        'jsonPreview.exportSuccess'.tr,
         snackPosition: SnackPosition.BOTTOM,
       );
 
@@ -89,8 +103,8 @@ class JsonPreviewController extends BaseController {
     } catch (e) {
       setError(e.toString());
       Get.snackbar(
-        'Export JSON',
-        'Could not export JSON file.',
+        'jsonPreview.export'.tr,
+        'jsonPreview.exportFailed'.tr,
         snackPosition: SnackPosition.BOTTOM,
       );
     } finally {
@@ -101,8 +115,8 @@ class JsonPreviewController extends BaseController {
   Future<void> shareJson() async {
     if (!canExport) {
       Get.snackbar(
-        'Share JSON',
-        'Fix validation errors before sharing.',
+        'jsonPreview.share'.tr,
+        'jsonPreview.fixBeforeShare'.tr,
         snackPosition: SnackPosition.BOTTOM,
       );
       return;
@@ -114,7 +128,7 @@ class JsonPreviewController extends BaseController {
   void _showExportSuccessDialog(File file) {
     Get.dialog<void>(
       AlertDialog(
-        title: const Text('File exported successfully'),
+        title: Text('jsonPreview.exportDialogTitle'.tr),
         content: Text(
           file.path,
           style: const TextStyle(fontSize: 13),
@@ -125,7 +139,7 @@ class JsonPreviewController extends BaseController {
               Get.back();
               await _repository.openExportFolder(highlightFile: file);
             },
-            child: const Text('Open Folder'),
+            child: Text('jsonPreview.openFolder'.tr),
           ),
           TextButton(
             onPressed: () async {
@@ -133,18 +147,30 @@ class JsonPreviewController extends BaseController {
               await _repository.shareExportedFile(file);
               Get.back(result: true);
             },
-            child: const Text('Share File'),
+            child: Text('details.shareFile'.tr),
           ),
           TextButton(
             onPressed: () {
               Get.back();
               Get.back(result: true);
             },
-            child: const Text('Close'),
+            child: Text('common.close'.tr),
           ),
         ],
       ),
       barrierDismissible: true,
     );
+  }
+
+  String _documentTitle(String extractedText) {
+    final trimmed = extractedText.trim();
+    if (trimmed.isEmpty) return 'Untitled Document';
+
+    final firstLine = trimmed.split('\n').first.trim();
+    if (firstLine.isEmpty) return 'Untitled Document';
+
+    const maxLength = 80;
+    if (firstLine.length <= maxLength) return firstLine;
+    return '${firstLine.substring(0, maxLength)}...';
   }
 }

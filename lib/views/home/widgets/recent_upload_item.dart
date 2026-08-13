@@ -1,23 +1,31 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
-import '../../../core/theme/app_colors.dart';
-import '../../../models/recent_upload_model.dart';
+import '../../../controllers/home_controller.dart';
+import '../../../core/localization/display_helpers.dart';
+import '../../../core/theme/app_theme_context.dart';
+import '../../../models/history_model.dart';
 
-/// Single recent upload list item.
-class RecentUploadItem extends StatelessWidget {
-  const RecentUploadItem({
+/// Single recent document list item for Home.
+class RecentDocumentItem extends StatelessWidget {
+  const RecentDocumentItem({
     super.key,
-    required this.upload,
+    required this.document,
     required this.onTap,
   });
 
-  final RecentUploadModel upload;
+  final HistoryModel document;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
+    final title = displayDocumentTitle(HomeController.documentTitle(document));
+    final subtitle = HomeController.relativeTime(document.createdAt);
+    final hasImage = HomeController.hasLocalImage(document);
+
     return Material(
-      color: Colors.white,
+      color: context.colors.surface,
       borderRadius: BorderRadius.circular(14),
       child: InkWell(
         onTap: onTap,
@@ -26,26 +34,31 @@ class RecentUploadItem extends StatelessWidget {
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: AppColors.cardBorder),
+            border: Border.all(color: context.appColors.cardBorder),
           ),
           child: Row(
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(10),
-                child: Image.asset(
-                  upload.thumbnailAsset,
+                child: Container(
                   width: 56,
                   height: 56,
-                  fit: BoxFit.cover,
-                  cacheWidth: 112,
-                  cacheHeight: 112,
-                  filterQuality: FilterQuality.low,
-                  errorBuilder: (_, __, ___) => Container(
-                    width: 56,
-                    height: 56,
-                    color: AppColors.iconBgPurple,
-                    child: const Icon(Icons.description_outlined),
-                  ),
+                  color: context.appColors.iconSoft,
+                  child: hasImage
+                      ? Image.file(
+                          File(document.imagePath),
+                          width: 56,
+                          height: 56,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => Icon(
+                            Icons.description_outlined,
+                            color: context.colors.primary,
+                          ),
+                        )
+                      : Icon(
+                          Icons.description_outlined,
+                          color: context.colors.primary,
+                        ),
                 ),
               ),
               const SizedBox(width: 14),
@@ -53,24 +66,35 @@ class RecentUploadItem extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      upload.fileName,
-                      style: const TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.black87,
+                    Directionality(
+                      textDirection: TextDirection.rtl,
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.right,
+                          style: context.texts.titleSmall?.copyWith(
+                            fontWeight: FontWeight.w700,
+                            color: context.colors.onSurface,
+                          ),
+                        ),
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      upload.uploadedAgo,
-                      style: const TextStyle(
-                        fontSize: 13,
-                        color: AppColors.textSecondary,
+                      subtitle,
+                      style: context.texts.bodySmall?.copyWith(
+                        color: context.colors.onSurfaceVariant,
                       ),
                     ),
                   ],
                 ),
+              ),
+              Icon(
+                Icons.chevron_right,
+                color: context.colors.onSurfaceVariant,
               ),
             ],
           ),

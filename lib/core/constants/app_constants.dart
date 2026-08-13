@@ -3,6 +3,7 @@ class AppConstants {
   AppConstants._();
 
   static const String appName = 'Maktub';
+  static const String appDisplayName = 'Maktub OCR';
   static const String appTagline = 'AI Arabic OCR';
   static const String appVersion = '1.0.0';
 

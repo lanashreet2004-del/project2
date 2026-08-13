@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_theme_context.dart';
 
 class ResultExtractedTextCard extends StatelessWidget {
   const ResultExtractedTextCard({
@@ -12,8 +13,7 @@ class ResultExtractedTextCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final displayText = text.isEmpty ? 'No text extracted.' : text;
+    final displayText = text.isEmpty ? 'result.noText'.tr : text;
 
     return Card(
       child: Padding(
@@ -22,8 +22,8 @@ class ResultExtractedTextCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Extracted Text',
-              style: theme.textTheme.titleMedium?.copyWith(
+              'result.extractedText'.tr,
+              style: context.texts.titleMedium?.copyWith(
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -32,12 +32,12 @@ class ResultExtractedTextCard extends StatelessWidget {
               textDirection: TextDirection.rtl,
               child: SelectableText(
                 displayText,
-                style: theme.textTheme.bodyLarge?.copyWith(
+                style: context.texts.bodyLarge?.copyWith(
                   height: 1.8,
                   letterSpacing: 0.2,
                   color: text.isEmpty
-                      ? AppColors.textSecondary
-                      : theme.colorScheme.onSurface,
+                      ? context.colors.onSurfaceVariant
+                      : context.colors.onSurface,
                 ),
                 textAlign: TextAlign.right,
               ),

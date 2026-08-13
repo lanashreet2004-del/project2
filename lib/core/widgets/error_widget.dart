@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 /// Reusable error state widget with optional retry action.
 class AppErrorWidget extends StatelessWidget {
@@ -33,7 +34,7 @@ class AppErrorWidget extends StatelessWidget {
               FilledButton.tonalIcon(
                 onPressed: onRetry,
                 icon: const Icon(Icons.refresh),
-                label: const Text('Retry'),
+                label: Text('errors.retry'.tr),
               ),
             ],
           ],

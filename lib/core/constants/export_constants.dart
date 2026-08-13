@@ -3,6 +3,7 @@ class ExportConstants {
   ExportConstants._();
 
   static const String exportsFolderName = 'DocumentsExports';
+  static const String pdfExportsSubfolder = 'pdf';
   static const String jsonFilePrefix = 'document_';
   static const String jsonFileExtension = '.json';
   static const String pdfFilePrefix = 'document_';

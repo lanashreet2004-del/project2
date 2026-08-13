@@ -8,7 +8,9 @@ import '../models/ocr_result_model.dart';
 import '../models/json_preview_args.dart';
 import '../repositories/history_repository.dart';
 import '../repositories/pdf_export_repository.dart';
+import '../repositories/pdf_files_repository.dart';
 import '../repositories/word_export_repository.dart';
+import '../repositories/word_files_repository.dart';
 import '../routes/app_routes.dart';
 import 'base_controller.dart';
 
@@ -17,17 +19,23 @@ class DocumentDetailsController extends BaseController {
   DocumentDetailsController({
     required HistoryRepository repository,
     required PdfExportRepository pdfExportRepository,
+    required PdfFilesRepository pdfFilesRepository,
     required WordExportRepository wordExportRepository,
+    required WordFilesRepository wordFilesRepository,
     required HistoryModel document,
   })  : _repository = repository,
         _pdfExportRepository = pdfExportRepository,
-        _wordExportRepository = wordExportRepository {
+        _pdfFilesRepository = pdfFilesRepository,
+        _wordExportRepository = wordExportRepository,
+        _wordFilesRepository = wordFilesRepository {
     this.document.value = document;
   }
 
   final HistoryRepository _repository;
   final PdfExportRepository _pdfExportRepository;
+  final PdfFilesRepository _pdfFilesRepository;
   final WordExportRepository _wordExportRepository;
+  final WordFilesRepository _wordFilesRepository;
 
   final Rxn<HistoryModel> document = Rxn<HistoryModel>();
   final RxBool isEdited = false.obs;
@@ -36,13 +44,18 @@ class DocumentDetailsController extends BaseController {
   final RxBool isExportingWord = false.obs;
 
   List<String> get statusBadges {
-    final badges = <String>['Processed'];
-    if (isEdited.value) badges.add('Edited');
-    if (isExported.value) badges.add('Exported');
+    final badges = <String>['details.badgeProcessed'];
+    if (isEdited.value) badges.add('details.badgeEdited');
+    if (isExported.value) badges.add('details.badgeExported');
     return badges;
   }
 
-  String get exportStatus => statusBadges.join(', ');
+  String get exportStatus {
+    final parts = <String>['Processed'];
+    if (isEdited.value) parts.add('Edited');
+    if (isExported.value) parts.add('Exported');
+    return parts.join(', ');
+  }
 
   int get characterCount => document.value?.extractedText.length ?? 0;
 
@@ -110,20 +123,31 @@ class DocumentDetailsController extends BaseController {
       );
 
       if (file == null) {
-        setError('Failed to export PDF');
+        setError('details.exportPdfFailedTitle'.tr);
         Get.snackbar(
-          'Export PDF',
-          'Could not export PDF file.',
+          'details.exportPdf'.tr,
+          'details.exportPdfFailed'.tr,
           snackPosition: SnackPosition.BOTTOM,
         );
         return;
       }
 
+      final title = _pdfExportRepository.documentTitleOf(current);
+      try {
+        await _pdfFilesRepository.registerExportedPdf(
+          file: file,
+          document: current,
+          documentTitle: title,
+        );
+      } catch (_) {
+        // Export succeeded; library registration failure should not block UX.
+      }
+
       isExported.value = true;
 
       Get.snackbar(
-        'Export PDF',
-        'PDF exported successfully',
+        'details.exportPdf'.tr,
+        'details.exportPdfSuccess'.tr,
         snackPosition: SnackPosition.BOTTOM,
       );
 
@@ -131,8 +155,8 @@ class DocumentDetailsController extends BaseController {
     } catch (e) {
       setError(e.toString());
       Get.snackbar(
-        'Export PDF',
-        'Could not export PDF file.',
+        'details.exportPdf'.tr,
+        'details.exportPdfFailed'.tr,
         snackPosition: SnackPosition.BOTTOM,
       );
     } finally {
@@ -151,13 +175,24 @@ class DocumentDetailsController extends BaseController {
       final file = await _wordExportRepository.exportDocumentToWord(current);
 
       if (file == null) {
-        setError('Failed to export Word document');
+        setError('details.exportWordFailedTitle'.tr);
         Get.snackbar(
-          'Export Word',
-          'Could not export Word file.',
+          'details.exportWord'.tr,
+          'details.exportWordFailed'.tr,
           snackPosition: SnackPosition.BOTTOM,
         );
         return;
+      }
+
+      final title = _wordExportRepository.documentTitleOf(current);
+      try {
+        await _wordFilesRepository.registerExportedWord(
+          file: file,
+          document: current,
+          documentTitle: title,
+        );
+      } catch (_) {
+        // Export succeeded; library registration failure should not block UX.
       }
 
       isExported.value = true;
@@ -165,8 +200,8 @@ class DocumentDetailsController extends BaseController {
     } catch (e) {
       setError(e.toString());
       Get.snackbar(
-        'Export Word',
-        'Could not export Word file.',
+        'details.exportWord'.tr,
+        'details.exportWordFailed'.tr,
         snackPosition: SnackPosition.BOTTOM,
       );
     } finally {
@@ -177,7 +212,7 @@ class DocumentDetailsController extends BaseController {
   void _showWordExportSuccessDialog(File file) {
     Get.dialog<void>(
       AlertDialog(
-        title: const Text('Word exported successfully'),
+        title: Text('details.exportWordSuccess'.tr),
         content: Text(
           file.path,
           style: const TextStyle(fontSize: 13),
@@ -188,18 +223,18 @@ class DocumentDetailsController extends BaseController {
               Get.back();
               await _wordExportRepository.openExportedFile(file);
             },
-            child: const Text('Open File'),
+            child: Text('details.openFile'.tr),
           ),
           TextButton(
             onPressed: () async {
               Get.back();
               await _wordExportRepository.shareExportedFile(file);
             },
-            child: const Text('Share File'),
+            child: Text('details.shareFile'.tr),
           ),
           TextButton(
             onPressed: Get.back,
-            child: const Text('Close'),
+            child: Text('common.close'.tr),
           ),
         ],
       ),
@@ -210,7 +245,7 @@ class DocumentDetailsController extends BaseController {
   void _showPdfExportSuccessDialog(File file) {
     Get.dialog<void>(
       AlertDialog(
-        title: const Text('PDF exported successfully'),
+        title: Text('details.exportPdfSuccess'.tr),
         content: Text(
           file.path,
           style: const TextStyle(fontSize: 13),
@@ -221,18 +256,18 @@ class DocumentDetailsController extends BaseController {
               Get.back();
               await _pdfExportRepository.openExportedFile(file);
             },
-            child: const Text('Open File'),
+            child: Text('details.openFile'.tr),
           ),
           TextButton(
             onPressed: () async {
               Get.back();
               await _pdfExportRepository.shareExportedFile(file);
             },
-            child: const Text('Share File'),
+            child: Text('details.shareFile'.tr),
           ),
           TextButton(
             onPressed: Get.back,
-            child: const Text('Close'),
+            child: Text('common.close'.tr),
           ),
         ],
       ),

@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import '../../controllers/upload_controller.dart';
 import '../../core/widgets/async_state_builder.dart';
 import '../../core/widgets/responsive_layout.dart';
+import '../../core/widgets/wavy_app_bar.dart';
 import '../../routes/app_routes.dart';
 
 /// Upload screen — shows edited image ready for future API upload.
@@ -17,13 +18,13 @@ class UploadView extends GetView<UploadController> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Upload')),
+      appBar: WavyAppBar(title: Text('upload.title'.tr)),
       body: Obx(
         () => AsyncStateBuilder(
           isLoading: controller.isLoading.value,
           errorMessage: controller.errorMessage.value,
           onRetry: controller.upload,
-          loadingMessage: 'Uploading...',
+          loadingMessage: 'upload.uploading'.tr,
           builder: (context) {
             final filePath =
                 controller.editedImagePath.value ?? controller.selectedFilePath.value;
@@ -40,7 +41,7 @@ class UploadView extends GetView<UploadController> {
                     Text(
                       filePath != null
                           ? _fileName(filePath)
-                          : 'No image selected',
+                          : 'upload.noImage'.tr,
                       style: Theme.of(context).textTheme.bodyLarge,
                       textAlign: TextAlign.center,
                     ),
@@ -50,7 +51,7 @@ class UploadView extends GetView<UploadController> {
                           ? () => Get.toNamed(AppRoutes.processing)
                           : null,
                       icon: const Icon(Icons.auto_fix_high_outlined),
-                      label: const Text('Process OCR'),
+                      label: Text('upload.processOcr'.tr),
                       style: FilledButton.styleFrom(
                         backgroundColor: colorScheme.primary,
                         minimumSize: const Size(double.infinity, 52),
@@ -100,7 +101,7 @@ class _ImagePreview extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             Text(
-              'No edited image available',
+              'upload.noEditedImage'.tr,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: colorScheme.onSurfaceVariant,
                   ),

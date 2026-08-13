@@ -35,8 +35,9 @@ class DocumentsController extends BaseController {
     documents.clear();
   }
 
-  void openDocument(HistoryModel item) {
-    Get.toNamed(AppRoutes.documentDetails, arguments: item);
+  Future<void> openDocument(HistoryModel item) async {
+    await Get.toNamed(AppRoutes.documentDetails, arguments: item);
+    await loadDocuments();
   }
 
   void scanNewDocument() {

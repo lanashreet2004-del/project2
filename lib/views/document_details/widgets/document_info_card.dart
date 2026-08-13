@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_theme_context.dart';
 
 class DocumentInfoCard extends StatelessWidget {
   const DocumentInfoCard({
@@ -18,7 +19,6 @@ class DocumentInfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final confidencePercent =
         (confidence * 100).clamp(0, 100).toStringAsFixed(0);
 
@@ -29,29 +29,32 @@ class DocumentInfoCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Document Information',
-              style: theme.textTheme.titleMedium?.copyWith(
+              'details.info'.tr,
+              style: context.texts.titleMedium?.copyWith(
                 fontWeight: FontWeight.w700,
               ),
             ),
             const SizedBox(height: 16),
             _InfoRow(
-              label: 'Document ID',
+              label: 'details.id'.tr,
               value: documentId,
-              valueStyle: theme.textTheme.bodyMedium?.copyWith(
+              valueStyle: context.texts.bodyMedium?.copyWith(
                 fontFamily: 'monospace',
                 fontSize: 12,
               ),
             ),
             const SizedBox(height: 12),
-            _InfoRow(label: 'Saved Date', value: savedDate),
+            _InfoRow(label: 'details.savedDate'.tr, value: savedDate),
             const SizedBox(height: 12),
-            _InfoRow(label: 'Confidence Score', value: '$confidencePercent%'),
+            _InfoRow(
+              label: 'details.confidence'.tr,
+              value: '$confidencePercent%',
+            ),
             const SizedBox(height: 16),
             Text(
-              'Document Status',
-              style: theme.textTheme.labelLarge?.copyWith(
-                color: AppColors.textSecondary,
+              'details.status'.tr,
+              style: context.texts.labelLarge?.copyWith(
+                color: context.colors.onSurfaceVariant,
               ),
             ),
             const SizedBox(height: 10),
@@ -87,15 +90,16 @@ class _InfoRow extends StatelessWidget {
           width: 130,
           child: Text(
             label,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: AppColors.textSecondary,
-                ),
+            style: context.texts.bodyMedium?.copyWith(
+              color: context.colors.onSurfaceVariant,
+            ),
           ),
         ),
         Expanded(
           child: Text(
             value,
-            style: valueStyle ?? Theme.of(context).textTheme.bodyMedium?.copyWith(
+            style: valueStyle ??
+                context.texts.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
           ),
@@ -106,27 +110,25 @@ class _InfoRow extends StatelessWidget {
 }
 
 class _StatusBadge extends StatelessWidget {
-  const _StatusBadge(this.status);
+  const _StatusBadge(this.statusKey);
 
-  final String status;
+  final String statusKey;
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    late final Color background;
+    late final Color foreground;
 
-    Color background;
-    Color foreground;
-
-    switch (status) {
-      case 'Edited':
-        background = AppColors.warning.withValues(alpha: 0.15);
-        foreground = AppColors.warning;
-      case 'Exported':
-        background = AppColors.info.withValues(alpha: 0.15);
-        foreground = AppColors.info;
+    switch (statusKey) {
+      case 'details.badgeEdited':
+        background = context.appColors.warning.withValues(alpha: 0.15);
+        foreground = context.appColors.warning;
+      case 'details.badgeExported':
+        background = context.appColors.info.withValues(alpha: 0.15);
+        foreground = context.appColors.info;
       default:
-        background = AppColors.success.withValues(alpha: 0.15);
-        foreground = AppColors.success;
+        background = context.appColors.success.withValues(alpha: 0.15);
+        foreground = context.appColors.success;
     }
 
     return Container(
@@ -137,8 +139,8 @@ class _StatusBadge extends StatelessWidget {
         border: Border.all(color: foreground.withValues(alpha: 0.35)),
       ),
       child: Text(
-        status,
-        style: theme.textTheme.labelMedium?.copyWith(
+        statusKey.tr,
+        style: context.texts.labelMedium?.copyWith(
           color: foreground,
           fontWeight: FontWeight.w600,
         ),

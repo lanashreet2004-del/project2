@@ -4,9 +4,11 @@ import 'package:get_storage/get_storage.dart';
 
 import 'core/bindings/initial_binding.dart';
 import 'core/constants/app_constants.dart';
-import 'core/constants/storage_keys.dart';
+import 'core/localization/app_translations.dart';
+import 'core/localization/locale_preferences.dart';
 import 'core/services/storage_service.dart';
 import 'core/theme/app_theme.dart';
+import 'core/theme/theme_preferences.dart';
 import 'routes/app_pages.dart';
 
 Future<void> main() async {
@@ -21,14 +23,18 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final storage = StorageService();
-    final isDarkMode = storage.read<bool>(StorageKeys.darkMode) ?? false;
+    final themeMode = ThemePreferences.read(storage);
+    final appLocale = LocalePreferences.read(storage);
 
     return GetMaterialApp(
       title: AppConstants.appName,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
-      themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
+      themeMode: themeMode,
+      translations: AppTranslations(),
+      locale: appLocale.locale,
+      fallbackLocale: const Locale('en'),
       initialBinding: InitialBinding(),
       initialRoute: AppPages.initial,
       getPages: AppPages.routes,

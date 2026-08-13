@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:image/image.dart' as img;
 import 'package:image_cropper/image_cropper.dart';
 import 'package:path_provider/path_provider.dart';
@@ -68,13 +69,13 @@ class ImageEditRepository extends BaseRepository {
       aspectRatio: aspectRatio,
       uiSettings: [
         AndroidUiSettings(
-          toolbarTitle: 'Crop Image',
-          toolbarColor: const Color(0xFF5E5CE6),
+          toolbarTitle: 'editor.cropImage'.tr,
+          toolbarColor: const Color(0xFF14532D),
           toolbarWidgetColor: Colors.white,
           initAspectRatio: CropAspectRatioPreset.original,
           lockAspectRatio: lockAspectRatio,
         ),
-        IOSUiSettings(title: 'Crop Image'),
+        IOSUiSettings(title: 'editor.cropImage'.tr),
       ],
     );
     return cropped?.path;

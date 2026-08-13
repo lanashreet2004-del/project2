@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../controllers/documents_controller.dart';
-import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_theme_context.dart';
 import '../../core/widgets/async_state_builder.dart';
 import '../../core/widgets/responsive_layout.dart';
+import '../../core/widgets/wavy_app_bar.dart';
 import 'widgets/document_item_tile.dart';
 
 /// My Documents screen — UI only.
@@ -14,10 +15,9 @@ class DocumentsView extends GetView<DocumentsController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.homeBackground,
-      appBar: AppBar(
-        title: const Text('My Documents'),
-        centerTitle: true,
+      backgroundColor: context.colors.surfaceContainerLowest,
+      appBar: WavyAppBar(
+        title: Text('documents.title'.tr),
         actions: [
           Obx(() {
             if (controller.documents.isEmpty) {
@@ -27,8 +27,8 @@ class DocumentsView extends GetView<DocumentsController> {
             return TextButton(
               onPressed: () => _confirmClearAll(context),
               child: Text(
-                'Clear All',
-                style: TextStyle(color: Theme.of(context).colorScheme.error),
+                'documents.clearAll'.tr,
+                style: TextStyle(color: context.appColors.onAppBar),
               ),
             );
           }),
@@ -77,20 +77,18 @@ class DocumentsView extends GetView<DocumentsController> {
   Future<void> _confirmDelete(BuildContext context, String id) async {
     final confirmed = await Get.dialog<bool>(
       AlertDialog(
-        title: const Text('Delete document?'),
-        content: const Text(
-          'This document will be permanently removed from My Documents.',
-        ),
+        title: Text('documents.deleteTitle'.tr),
+        content: Text('documents.deleteBody'.tr),
         actions: [
           TextButton(
             onPressed: () => Get.back(result: false),
-            child: const Text('Cancel'),
+            child: Text('common.cancel'.tr),
           ),
           TextButton(
             onPressed: () => Get.back(result: true),
             child: Text(
-              'Delete',
-              style: TextStyle(color: Theme.of(context).colorScheme.error),
+              'common.delete'.tr,
+              style: TextStyle(color: context.colors.error),
             ),
           ),
         ],
@@ -105,20 +103,18 @@ class DocumentsView extends GetView<DocumentsController> {
   Future<void> _confirmClearAll(BuildContext context) async {
     final confirmed = await Get.dialog<bool>(
       AlertDialog(
-        title: const Text('Clear all documents?'),
-        content: const Text(
-          'All saved documents will be permanently removed.',
-        ),
+        title: Text('documents.clearTitle'.tr),
+        content: Text('documents.clearBody'.tr),
         actions: [
           TextButton(
             onPressed: () => Get.back(result: false),
-            child: const Text('Cancel'),
+            child: Text('common.cancel'.tr),
           ),
           TextButton(
             onPressed: () => Get.back(result: true),
             child: Text(
-              'Clear All',
-              style: TextStyle(color: Theme.of(context).colorScheme.error),
+              'documents.clearAll'.tr,
+              style: TextStyle(color: context.colors.error),
             ),
           ),
         ],
@@ -138,8 +134,6 @@ class _EmptyDocumentsState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -150,28 +144,28 @@ class _EmptyDocumentsState extends StatelessWidget {
               width: 96,
               height: 96,
               decoration: BoxDecoration(
-                color: AppColors.iconBgPurple,
+                color: context.appColors.iconSoft,
                 borderRadius: BorderRadius.circular(24),
               ),
               child: Icon(
                 Icons.folder_open_outlined,
                 size: 48,
-                color: AppColors.accent.withValues(alpha: 0.8),
+                color: context.colors.primary.withValues(alpha: 0.8),
               ),
             ),
             const SizedBox(height: 24),
             Text(
-              'No Documents Yet',
-              style: theme.textTheme.titleLarge?.copyWith(
+              'documents.emptyTitle'.tr,
+              style: context.texts.titleLarge?.copyWith(
                 fontWeight: FontWeight.w700,
               ),
             ),
             const SizedBox(height: 10),
             Text(
-              'Your saved OCR documents will appear here.',
+              'documents.emptyBody'.tr,
               textAlign: TextAlign.center,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: AppColors.textSecondary,
+              style: context.texts.bodyMedium?.copyWith(
+                color: context.colors.onSurfaceVariant,
                 height: 1.5,
               ),
             ),
@@ -181,12 +175,11 @@ class _EmptyDocumentsState extends StatelessWidget {
               child: FilledButton.icon(
                 onPressed: onScanTap,
                 icon: const Icon(Icons.document_scanner_outlined),
-                label: const Text(
-                  'Scan New Document',
-                  style: TextStyle(fontWeight: FontWeight.w600),
+                label: Text(
+                  'documents.scanNew'.tr,
+                  style: const TextStyle(fontWeight: FontWeight.w600),
                 ),
                 style: FilledButton.styleFrom(
-                  backgroundColor: AppColors.accent,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14),
                   ),

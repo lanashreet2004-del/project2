@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_theme_context.dart';
 
 /// Shared card layout for gallery and camera upload options.
 class UploadOptionCard extends StatelessWidget {
@@ -20,7 +20,7 @@ class UploadOptionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.white,
+      color: context.colors.surface,
       borderRadius: BorderRadius.circular(14),
       child: InkWell(
         onTap: onTap,
@@ -29,7 +29,7 @@ class UploadOptionCard extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 12),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: AppColors.cardBorder),
+            border: Border.all(color: context.appColors.cardBorder),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -38,18 +38,17 @@ class UploadOptionCard extends StatelessWidget {
                 width: 52,
                 height: 52,
                 decoration: BoxDecoration(
-                  color: AppColors.iconBgPurple,
+                  color: context.appColors.iconSoft,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(icon, color: AppColors.accent, size: 28),
+                child: Icon(icon, color: context.colors.primary, size: 28),
               ),
               const SizedBox(height: 12),
               Text(
                 title,
-                style: const TextStyle(
-                  fontSize: 15,
+                style: context.texts.titleSmall?.copyWith(
                   fontWeight: FontWeight.w700,
-                  color: Colors.black87,
+                  color: context.colors.onSurface,
                 ),
               ),
               const SizedBox(height: 4),
@@ -58,9 +57,8 @@ class UploadOptionCard extends StatelessWidget {
                 textAlign: TextAlign.center,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: AppColors.textSecondary,
+                style: context.texts.bodySmall?.copyWith(
+                  color: context.colors.onSurfaceVariant,
                 ),
               ),
             ],

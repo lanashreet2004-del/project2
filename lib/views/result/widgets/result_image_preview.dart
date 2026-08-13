@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
-import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_theme_context.dart';
 
 class ResultImagePreview extends StatelessWidget {
   const ResultImagePreview({
@@ -22,7 +22,7 @@ class ResultImagePreview extends StatelessWidget {
             child: Icon(
               Icons.image_outlined,
               size: 48,
-              color: Theme.of(context).colorScheme.outline,
+              color: context.colors.outline,
             ),
           ),
         ),
@@ -33,7 +33,7 @@ class ResultImagePreview extends StatelessWidget {
       borderRadius: BorderRadius.circular(12),
       child: Container(
         decoration: BoxDecoration(
-          border: Border.all(color: AppColors.cardBorder),
+          border: Border.all(color: context.appColors.cardBorder),
           borderRadius: BorderRadius.circular(12),
         ),
         child: AspectRatio(

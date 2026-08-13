@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_theme_context.dart';
 
 class JsonStatsChips extends StatelessWidget {
   const JsonStatsChips({
@@ -25,10 +26,16 @@ class JsonStatsChips extends StatelessWidget {
       spacing: 8,
       runSpacing: 8,
       children: [
-        _StatChip(label: 'Characters', value: characterCount.toString()),
-        _StatChip(label: 'Words', value: wordCount.toString()),
-        _StatChip(label: 'Lines', value: lineCount.toString()),
-        _StatChip(label: 'Confidence', value: '$confidencePercent%'),
+        _StatChip(
+          label: 'details.characters'.tr,
+          value: characterCount.toString(),
+        ),
+        _StatChip(label: 'details.words'.tr, value: wordCount.toString()),
+        _StatChip(label: 'details.lines'.tr, value: lineCount.toString()),
+        _StatChip(
+          label: 'details.confidence'.tr,
+          value: '$confidencePercent%',
+        ),
       ],
     );
   }
@@ -48,25 +55,25 @@ class _StatChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: AppColors.iconBgPurple,
+        color: context.appColors.iconSoft,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.cardBorder),
+        border: Border.all(color: context.appColors.cardBorder),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             '$label: ',
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: AppColors.textSecondary,
-                ),
+            style: context.texts.labelSmall?.copyWith(
+              color: context.colors.onSurfaceVariant,
+            ),
           ),
           Text(
             value,
-            style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.accent,
-                ),
+            style: context.texts.labelMedium?.copyWith(
+              fontWeight: FontWeight.w700,
+              color: context.colors.primary,
+            ),
           ),
         ],
       ),

@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../controllers/document_details_controller.dart';
-import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_theme_context.dart';
 import '../../core/widgets/responsive_layout.dart';
+import '../../core/widgets/wavy_app_bar.dart';
 import 'widgets/document_actions_grid.dart';
 import 'widgets/document_details_preview.dart';
 import 'widgets/document_extracted_text_card.dart';
@@ -17,16 +18,18 @@ class DocumentDetailsView extends GetView<DocumentDetailsController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.homeBackground,
-      appBar: AppBar(
-        title: const Text('Document Details'),
-        centerTitle: true,
+      backgroundColor: context.colors.surfaceContainerLowest,
+      appBar: WavyAppBar(
+        title: Text('details.title'.tr),
       ),
       body: Obx(() {
         final document = controller.document.value;
         if (document == null) {
-          return const Center(child: Text('Document not found'));
+          return Center(child: Text('details.notFound'.tr));
         }
+
+        final exporting =
+            controller.isExportingPdf.value || controller.isExportingWord.value;
 
         return ResponsiveContainer(
           maxWidth: 800,
@@ -52,29 +55,36 @@ class DocumentDetailsView extends GetView<DocumentDetailsController> {
                 DocumentActionsGrid(
                   actions: [
                     DocumentActionItem(
-                      label: 'Edit Text',
+                      label: 'details.editText'.tr,
                       icon: Icons.edit_outlined,
+                      isEnabled: !exporting,
                       onTap: controller.openTextEditor,
                     ),
                     DocumentActionItem(
-                      label: 'Export JSON',
+                      label: 'details.exportJson'.tr,
                       icon: Icons.code,
+                      isEnabled: !exporting,
                       onTap: controller.openJsonPreview,
                     ),
                     DocumentActionItem(
-                      label: 'Export PDF',
+                      label: 'details.exportPdf'.tr,
                       icon: Icons.picture_as_pdf_outlined,
+                      isLoading: controller.isExportingPdf.value,
+                      isEnabled: !controller.isExportingWord.value,
                       onTap: controller.exportPdf,
                     ),
                     DocumentActionItem(
-                      label: 'Export Word',
+                      label: 'details.exportWord'.tr,
                       icon: Icons.description_outlined,
+                      isLoading: controller.isExportingWord.value,
+                      isEnabled: !controller.isExportingPdf.value,
                       onTap: controller.exportWord,
                     ),
                     DocumentActionItem(
-                      label: 'Delete Document',
+                      label: 'details.deleteDocument'.tr,
                       icon: Icons.delete_outline,
                       isDestructive: true,
+                      isEnabled: !exporting,
                       onTap: () => _confirmDelete(context),
                     ),
                   ],
@@ -105,20 +115,18 @@ class DocumentDetailsView extends GetView<DocumentDetailsController> {
   Future<void> _confirmDelete(BuildContext context) async {
     final confirmed = await Get.dialog<bool>(
       AlertDialog(
-        title: const Text('Delete document?'),
-        content: const Text(
-          'This document will be permanently removed from My Documents.',
-        ),
+        title: Text('details.deleteTitle'.tr),
+        content: Text('details.deleteBody'.tr),
         actions: [
           TextButton(
             onPressed: () => Get.back(result: false),
-            child: const Text('Cancel'),
+            child: Text('common.cancel'.tr),
           ),
           TextButton(
             onPressed: () => Get.back(result: true),
             child: Text(
-              'Delete',
-              style: TextStyle(color: Theme.of(context).colorScheme.error),
+              'common.delete'.tr,
+              style: TextStyle(color: context.colors.error),
             ),
           ),
         ],

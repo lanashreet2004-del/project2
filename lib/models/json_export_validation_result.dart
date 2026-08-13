@@ -1,3 +1,5 @@
+import 'package:get/get.dart';
+
 /// Result of JSON export payload validation.
 class JsonExportValidationResult {
   const JsonExportValidationResult({
@@ -9,10 +11,10 @@ class JsonExportValidationResult {
   final List<String> errors;
 
   String get statusTitle => isValid
-      ? '✓ JSON Ready For Export'
-      : '⚠ Invalid Document Data';
+      ? 'jsonPreview.readyTitle'.tr
+      : 'jsonPreview.invalidTitle'.tr;
 
   String get statusMessage => isValid
-      ? 'All required fields passed validation checks.'
-      : errors.join('\n');
+      ? 'jsonPreview.readyBody'.tr
+      : (errors.isEmpty ? 'jsonPreview.invalidBody'.tr : errors.join('\n'));
 }

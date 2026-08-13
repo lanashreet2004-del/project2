@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_theme_context.dart';
 import '../../../models/json_export_validation_result.dart';
 
 class JsonValidationCard extends StatelessWidget {
@@ -13,13 +13,14 @@ class JsonValidationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final isValid = validation.isValid;
+    final statusColor =
+        isValid ? context.appColors.success : context.appColors.warning;
 
     return Card(
       color: isValid
-          ? AppColors.success.withValues(alpha: 0.08)
-          : AppColors.warning.withValues(alpha: 0.1),
+          ? context.appColors.success.withValues(alpha: 0.08)
+          : context.appColors.warning.withValues(alpha: 0.1),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Row(
@@ -27,7 +28,7 @@ class JsonValidationCard extends StatelessWidget {
           children: [
             Icon(
               isValid ? Icons.check_circle_outline : Icons.warning_amber_outlined,
-              color: isValid ? AppColors.success : AppColors.warning,
+              color: statusColor,
               size: 28,
             ),
             const SizedBox(width: 12),
@@ -37,16 +38,16 @@ class JsonValidationCard extends StatelessWidget {
                 children: [
                   Text(
                     validation.statusTitle,
-                    style: theme.textTheme.titleSmall?.copyWith(
+                    style: context.texts.titleSmall?.copyWith(
                       fontWeight: FontWeight.w700,
-                      color: isValid ? AppColors.success : AppColors.warning,
+                      color: statusColor,
                     ),
                   ),
                   const SizedBox(height: 6),
                   Text(
                     validation.statusMessage,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: AppColors.textSecondary,
+                    style: context.texts.bodySmall?.copyWith(
+                      color: context.colors.onSurfaceVariant,
                       height: 1.5,
                     ),
                   ),

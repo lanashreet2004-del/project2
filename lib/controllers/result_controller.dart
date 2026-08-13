@@ -6,6 +6,7 @@ import '../repositories/history_repository.dart';
 import '../repositories/result_repository.dart';
 import '../routes/app_routes.dart';
 import 'base_controller.dart';
+import 'home_controller.dart';
 import 'upload_controller.dart';
 
 /// Controller for OCR result presentation logic.
@@ -75,7 +76,7 @@ class ResultController extends BaseController {
 
   Future<void> saveDocument() async {
     final current = result.value;
-    if (current == null) return;
+    if (current == null || isSaving.value) return;
 
     isSaving.value = true;
     clearError();
@@ -84,16 +85,25 @@ class ResultController extends BaseController {
       final historyItem = _historyFromOcrResult(current);
       await _historyRepository.saveDocument(historyItem);
 
+      if (Get.isRegistered<HomeController>()) {
+        await Get.find<HomeController>().loadDocuments();
+      }
+
       Get.snackbar(
-        'Saved',
-        'Document saved to My Documents.',
+        'result.savedTitle'.tr,
+        'result.savedBody'.tr,
         snackPosition: SnackPosition.BOTTOM,
+      );
+
+      await Get.offNamed(
+        AppRoutes.documentDetails,
+        arguments: historyItem,
       );
     } catch (e) {
       setError(e.toString());
       Get.snackbar(
-        'Error',
-        'Could not save document.',
+        'common.error'.tr,
+        'result.saveFailed'.tr,
         snackPosition: SnackPosition.BOTTOM,
       );
     } finally {

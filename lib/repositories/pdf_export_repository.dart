@@ -32,15 +32,20 @@ class PdfExportRepository extends BaseRepository {
     if (bytes == null) return null;
 
     try {
-      final directory = await _ensureExportsDirectory();
-      final fileName =
-          '${ExportConstants.pdfFilePrefix}${_sanitizeId(document.id)}${ExportConstants.pdfFileExtension}';
+      final directory = await _ensurePdfExportsDirectory();
+      final title = documentTitleOf(document);
+      final fileName = _buildUniquePdfFileName(title);
       final file = File('${directory.path}/$fileName');
       await file.writeAsBytes(bytes);
       return file;
     } catch (_) {
       return null;
     }
+  }
+
+  /// Human-readable title derived from OCR text (same as PDF report title).
+  String documentTitleOf(HistoryModel document) {
+    return _documentTitle(document.extractedText);
   }
 
   /// Builds a PDF report in memory using bundled Arabic fonts (offline).
@@ -330,9 +335,9 @@ class PdfExportRepository extends BaseRepository {
       width: double.infinity,
       padding: const pw.EdgeInsets.symmetric(vertical: 20, horizontal: 16),
       decoration: pw.BoxDecoration(
-        color: PdfColor.fromHex('#EDE7F6'),
+        color: PdfColor.fromHex('#E8F0EA'),
         borderRadius: pw.BorderRadius.circular(12),
-        border: pw.Border.all(color: PdfColor.fromHex('#5E5CE6'), width: 0.5),
+        border: pw.Border.all(color: PdfColor.fromHex('#14532D'), width: 0.5),
       ),
       child: pw.Column(
         children: [
@@ -342,7 +347,7 @@ class PdfExportRepository extends BaseRepository {
               boldFont,
               latinBoldFont,
               fontSize: 26,
-              color: PdfColor.fromHex('#5E5CE6'),
+              color: PdfColor.fromHex('#14532D'),
             ),
             textAlign: pw.TextAlign.center,
           ),
@@ -369,9 +374,9 @@ class PdfExportRepository extends BaseRepository {
         width: double.infinity,
         padding: const pw.EdgeInsets.symmetric(vertical: 20, horizontal: 16),
         decoration: pw.BoxDecoration(
-          color: PdfColor.fromHex('#EDE7F6'),
+          color: PdfColor.fromHex('#E8F0EA'),
           borderRadius: pw.BorderRadius.circular(12),
-          border: pw.Border.all(color: PdfColor.fromHex('#5E5CE6'), width: 0.5),
+          border: pw.Border.all(color: PdfColor.fromHex('#14532D'), width: 0.5),
         ),
         child: pw.Column(
           children: [
@@ -381,7 +386,7 @@ class PdfExportRepository extends BaseRepository {
                 boldFont,
                 _getLatinBoldFont(),
                 fontSize: 26,
-                color: PdfColor.fromHex('#5E5CE6'),
+                color: PdfColor.fromHex('#14532D'),
               ),
               textAlign: pw.TextAlign.center,
             ),
@@ -646,9 +651,41 @@ class PdfExportRepository extends BaseRepository {
     return exportsDirectory;
   }
 
-  String _sanitizeId(String id) {
-    final sanitized = id.replaceAll(RegExp(r'[^\w\-]'), '_');
-    return sanitized.isEmpty ? 'unknown' : sanitized;
+  Future<Directory> _ensurePdfExportsDirectory() async {
+    final baseDirectory = await _ensureExportsDirectory();
+    final pdfDirectory = Directory(
+      '${baseDirectory.path}/${ExportConstants.pdfExportsSubfolder}',
+    );
+
+    if (!await pdfDirectory.exists()) {
+      await pdfDirectory.create(recursive: true);
+    }
+
+    return pdfDirectory;
+  }
+
+  String _buildUniquePdfFileName(String title) {
+    final base = _sanitizeFileName(title);
+    final stamp = DateTime.now().millisecondsSinceEpoch;
+    return '${base}_$stamp${ExportConstants.pdfFileExtension}';
+  }
+
+  String _sanitizeFileName(String input) {
+    var name = input.trim();
+    if (name.isEmpty) name = 'document';
+
+    name = name.replaceAll(RegExp(r'[<>:"/\\|?*\x00-\x1F]'), '_');
+    name = name.replaceAll(RegExp(r'\s+'), ' ').trim();
+    if (name.endsWith('.')) {
+      name = name.substring(0, name.length - 1).trim();
+    }
+
+    const maxLength = 60;
+    if (name.length > maxLength) {
+      name = name.substring(0, maxLength).trim();
+    }
+
+    return name.isEmpty ? 'document' : name;
   }
 
   String _formatDateTime(DateTime dateTime) {

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
+import '../../../core/theme/app_theme_context.dart';
 import 'camera_card_widget.dart';
 import 'gallery_card_widget.dart';
 import 'my_documents_card_widget.dart';
 
-/// Upload options section with gallery, camera, and documents cards.
+/// Upload options: Gallery + Camera primary row, My Documents secondary below.
 class UploadOptionsWidget extends StatelessWidget {
   const UploadOptionsWidget({
     super.key,
@@ -22,12 +24,11 @@ class UploadOptionsWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Ready To Share Your Document With Us ?',
-          style: TextStyle(
-            fontSize: 16,
+        Text(
+          'home.readyTitle'.tr,
+          style: context.texts.titleMedium?.copyWith(
             fontWeight: FontWeight.w700,
-            color: Colors.black87,
+            color: context.colors.onSurface,
             height: 1.3,
           ),
         ),
@@ -37,10 +38,10 @@ class UploadOptionsWidget extends StatelessWidget {
             Expanded(child: GalleryCardWidget(onTap: onGalleryTap)),
             const SizedBox(width: 14),
             Expanded(child: CameraCardWidget(onTap: onCameraTap)),
-            const SizedBox(width: 14),
-            Expanded(child: MyDocumentsCardWidget(onTap: onDocumentsTap)),
           ],
         ),
+        const SizedBox(height: 12),
+        MyDocumentsCardWidget(onTap: onDocumentsTap),
       ],
     );
   }

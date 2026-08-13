@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import 'upload_option_card.dart';
 
@@ -13,8 +14,8 @@ class CameraCardWidget extends StatelessWidget {
     return UploadOptionCard(
       onTap: onTap,
       icon: Icons.camera_alt_outlined,
-      title: 'Camera',
-      subtitle: 'Take a new photo',
+      title: 'home.camera'.tr,
+      subtitle: 'home.cameraSubtitle'.tr,
     );
   }
 }

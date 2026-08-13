@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_theme_context.dart';
 
 /// Editing tools: crop, rotate, retake, and brightness slider.
 class ImageEditorToolbar extends StatelessWidget {
@@ -32,11 +33,11 @@ class ImageEditorToolbar extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
+        color: context.colors.surface,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
+            color: context.colors.shadow.withValues(alpha: 0.06),
             blurRadius: 12,
             offset: const Offset(0, -4),
           ),
@@ -50,22 +51,22 @@ class ImageEditorToolbar extends StatelessWidget {
             children: [
               _ToolButton(
                 icon: Icons.crop,
-                label: 'Crop',
+                label: 'editor.crop'.tr,
                 onTap: isBusy ? null : onCrop,
               ),
               _ToolButton(
                 icon: Icons.rotate_left,
-                label: 'Rotate L',
+                label: 'editor.rotateLeft'.tr,
                 onTap: isBusy ? null : onRotateLeft,
               ),
               _ToolButton(
                 icon: Icons.rotate_right,
-                label: 'Rotate R',
+                label: 'editor.rotateRight'.tr,
                 onTap: isBusy ? null : onRotateRight,
               ),
               _ToolButton(
                 icon: Icons.refresh,
-                label: 'Retake',
+                label: 'editor.retake'.tr,
                 onTap: isBusy ? null : onRetake,
               ),
             ],
@@ -82,12 +83,12 @@ class ImageEditorToolbar extends StatelessWidget {
                   divisions: 15,
                   label: brightness.toStringAsFixed(1),
                   onChanged: isBusy ? null : onBrightnessChanged,
-                  activeColor: AppColors.accent,
+                  activeColor: context.colors.primary,
                 ),
               ),
               Text(
                 brightness.toStringAsFixed(1),
-                style: Theme.of(context).textTheme.labelLarge,
+                style: context.texts.labelLarge,
               ),
             ],
           ),
@@ -121,13 +122,13 @@ class _ToolButton extends StatelessWidget {
             Icon(
               icon,
               color: onTap == null
-                  ? Colors.grey
-                  : AppColors.accent,
+                  ? context.colors.onSurface.withValues(alpha: 0.38)
+                  : context.colors.primary,
             ),
             const SizedBox(height: 4),
             Text(
               label,
-              style: Theme.of(context).textTheme.labelSmall,
+              style: context.texts.labelSmall,
             ),
           ],
         ),

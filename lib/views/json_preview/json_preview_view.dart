@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../controllers/json_preview_controller.dart';
-import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_theme_context.dart';
 import '../../core/widgets/responsive_layout.dart';
+import '../../core/widgets/wavy_app_bar.dart';
 import 'widgets/json_code_block.dart';
 import 'widgets/json_stats_chips.dart';
 import 'widgets/json_validation_card.dart';
@@ -14,19 +15,17 @@ class JsonPreviewView extends GetView<JsonPreviewController> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final args = controller.args;
 
     return Scaffold(
-      backgroundColor: AppColors.homeBackground,
-      appBar: AppBar(
-        title: const Text('JSON Preview'),
-        centerTitle: true,
+      backgroundColor: context.colors.surfaceContainerLowest,
+      appBar: WavyAppBar(
+        title: Text('jsonPreview.title'.tr),
         actions: [
           IconButton(
             onPressed: controller.copyJson,
             icon: const Icon(Icons.copy_outlined),
-            tooltip: 'Copy JSON',
+            tooltip: 'jsonPreview.copyTooltip'.tr,
           ),
         ],
       ),
@@ -54,8 +53,8 @@ class JsonPreviewView extends GetView<JsonPreviewController> {
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        'Formatted JSON',
-                        style: theme.textTheme.titleSmall?.copyWith(
+                        'jsonPreview.formatted'.tr,
+                        style: context.texts.titleSmall?.copyWith(
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -75,7 +74,7 @@ class JsonPreviewView extends GetView<JsonPreviewController> {
                     OutlinedButton.icon(
                       onPressed: controller.copyJson,
                       icon: const Icon(Icons.copy_outlined),
-                      label: const Text('Copy JSON'),
+                      label: Text('jsonPreview.copy'.tr),
                       style: OutlinedButton.styleFrom(
                         minimumSize: const Size(double.infinity, 48),
                         shape: RoundedRectangleBorder(
@@ -91,22 +90,21 @@ class JsonPreviewView extends GetView<JsonPreviewController> {
                             ? null
                             : controller.exportJson,
                         icon: controller.isExporting.value
-                            ? const SizedBox(
+                            ? SizedBox(
                                 width: 18,
                                 height: 18,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
-                                  color: Colors.white,
+                                  color: context.colors.onPrimary,
                                 ),
                               )
                             : const Icon(Icons.save_outlined),
                         label: Text(
                           controller.isExporting.value
-                              ? 'Exporting...'
-                              : 'Export JSON',
+                              ? 'common.exporting'.tr
+                              : 'jsonPreview.export'.tr,
                         ),
                         style: FilledButton.styleFrom(
-                          backgroundColor: AppColors.accent,
                           minimumSize: const Size(double.infinity, 48),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -119,7 +117,7 @@ class JsonPreviewView extends GetView<JsonPreviewController> {
                       onPressed:
                           controller.canExport ? controller.shareJson : null,
                       icon: const Icon(Icons.share_outlined),
-                      label: const Text('Share JSON'),
+                      label: Text('jsonPreview.share'.tr),
                       style: OutlinedButton.styleFrom(
                         minimumSize: const Size(double.infinity, 48),
                         shape: RoundedRectangleBorder(

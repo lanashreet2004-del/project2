@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import 'upload_option_card.dart';
 
@@ -13,8 +14,8 @@ class GalleryCardWidget extends StatelessWidget {
     return UploadOptionCard(
       onTap: onTap,
       icon: Icons.image_outlined,
-      title: 'Gallery',
-      subtitle: 'Pick from your photos',
+      title: 'home.gallery'.tr,
+      subtitle: 'home.gallerySubtitle'.tr,
     );
   }
 }

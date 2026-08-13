@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../theme/app_colors.dart';
+import '../theme/app_theme_context.dart';
 
 /// Reusable dot page indicator for onboarding and carousels.
 class PageIndicator extends StatelessWidget {
@@ -19,7 +19,8 @@ class PageIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final active = activeColor ?? AppColors.accent;
+    final active = activeColor ?? context.colors.primary;
+    // Default inactive stays light for photo/onboarding overlays.
     final inactive = inactiveColor ?? Colors.white.withValues(alpha: 0.4);
 
     return Row(

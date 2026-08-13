@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../theme/app_colors.dart';
+import '../theme/app_theme_context.dart';
 
 /// Reusable app logo placeholder widget.
 class AppLogoPlaceholder extends StatelessWidget {
@@ -11,28 +11,30 @@ class AppLogoPlaceholder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final primary = context.colors.primary;
+
     return Container(
       width: size,
       height: size,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [AppColors.accent, AppColors.accentLight],
+          colors: [primary, context.colors.primaryContainer],
         ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.accent.withValues(alpha: 0.45),
-            blurRadius: 24,
-            offset: const Offset(0, 8),
+            color: primary.withValues(alpha: 0.28),
+            blurRadius: 20,
+            offset: const Offset(0, 6),
           ),
         ],
       ),
       child: Icon(
         Icons.document_scanner_outlined,
         size: iconSize,
-        color: Colors.white,
+        color: context.colors.onPrimary,
       ),
     );
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_theme_context.dart';
 
 class DocumentExtractedTextCard extends StatelessWidget {
   const DocumentExtractedTextCard({super.key, required this.text});
@@ -9,8 +10,7 @@ class DocumentExtractedTextCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final displayText = text.isEmpty ? 'No extracted text available.' : text;
+    final displayText = text.isEmpty ? 'details.noText'.tr : text;
 
     return Card(
       child: Padding(
@@ -19,8 +19,8 @@ class DocumentExtractedTextCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Extracted Text',
-              style: theme.textTheme.titleMedium?.copyWith(
+              'details.extractedText'.tr,
+              style: context.texts.titleMedium?.copyWith(
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -32,12 +32,12 @@ class DocumentExtractedTextCard extends StatelessWidget {
                   textDirection: TextDirection.rtl,
                   child: SelectableText(
                     displayText,
-                    style: theme.textTheme.bodyLarge?.copyWith(
+                    style: context.texts.bodyLarge?.copyWith(
                       height: 1.85,
                       letterSpacing: 0.2,
                       color: text.isEmpty
-                          ? AppColors.textSecondary
-                          : theme.colorScheme.onSurface,
+                          ? context.colors.onSurfaceVariant
+                          : context.colors.onSurface,
                     ),
                     textAlign: TextAlign.right,
                   ),

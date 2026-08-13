@@ -1,8 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_theme_context.dart';
 
 class DocumentDetailsPreview extends StatelessWidget {
   const DocumentDetailsPreview({
@@ -22,7 +23,7 @@ class DocumentDetailsPreview extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         child: Container(
           decoration: BoxDecoration(
-            border: Border.all(color: AppColors.cardBorder),
+            border: Border.all(color: context.appColors.cardBorder),
             borderRadius: BorderRadius.circular(16),
           ),
           child: AspectRatio(
@@ -30,7 +31,7 @@ class DocumentDetailsPreview extends StatelessWidget {
             child: Stack(
               fit: StackFit.expand,
               children: [
-                _buildImage(),
+                _buildImage(context),
                 Positioned(
                   right: 12,
                   bottom: 12,
@@ -43,14 +44,16 @@ class DocumentDetailsPreview extends StatelessWidget {
                       color: Colors.black.withValues(alpha: 0.55),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: const Row(
+                    child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.zoom_out_map, color: Colors.white, size: 16),
-                        SizedBox(width: 6),
+                        const Icon(Icons.zoom_out_map,
+                            color: Colors.white, size: 16),
+                        const SizedBox(width: 6),
                         Text(
-                          'Tap to preview',
-                          style: TextStyle(color: Colors.white, fontSize: 12),
+                          'details.tapToPreview'.tr,
+                          style: const TextStyle(
+                              color: Colors.white, fontSize: 12),
                         ),
                       ],
                     ),
@@ -64,15 +67,15 @@ class DocumentDetailsPreview extends StatelessWidget {
     );
   }
 
-  Widget _buildImage() {
+  Widget _buildImage(BuildContext context) {
     if (imagePath.isEmpty || !File(imagePath).existsSync()) {
       return ColoredBox(
-        color: AppColors.iconBgPurple,
+        color: context.appColors.iconSoft,
         child: Center(
           child: Icon(
             Icons.image_outlined,
             size: 56,
-            color: AppColors.textSecondary.withValues(alpha: 0.6),
+            color: context.colors.onSurfaceVariant.withValues(alpha: 0.6),
           ),
         ),
       );
@@ -82,11 +85,11 @@ class DocumentDetailsPreview extends StatelessWidget {
       File(imagePath),
       fit: BoxFit.cover,
       errorBuilder: (_, __, ___) => ColoredBox(
-        color: AppColors.iconBgPurple,
+        color: context.appColors.iconSoft,
         child: Icon(
           Icons.broken_image_outlined,
           size: 56,
-          color: AppColors.textSecondary.withValues(alpha: 0.6),
+          color: context.colors.onSurfaceVariant.withValues(alpha: 0.6),
         ),
       ),
     );

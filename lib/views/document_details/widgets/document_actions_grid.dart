@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_theme_context.dart';
 
 class DocumentActionItem {
   const DocumentActionItem({
@@ -8,12 +9,16 @@ class DocumentActionItem {
     required this.icon,
     required this.onTap,
     this.isDestructive = false,
+    this.isLoading = false,
+    this.isEnabled = true,
   });
 
   final String label;
   final IconData icon;
   final VoidCallback onTap;
   final bool isDestructive;
+  final bool isLoading;
+  final bool isEnabled;
 }
 
 class DocumentActionsGrid extends StatelessWidget {
@@ -27,10 +32,10 @@ class DocumentActionsGrid extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Quick Actions',
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w700,
-              ),
+          'details.quickActions'.tr,
+          style: context.texts.titleMedium?.copyWith(
+            fontWeight: FontWeight.w700,
+          ),
         ),
         const SizedBox(height: 14),
         GridView.count(
@@ -54,48 +59,62 @@ class _ActionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final color = action.isDestructive ? AppColors.error : AppColors.accent;
+    final enabled = action.isEnabled && !action.isLoading;
+    final color =
+        action.isDestructive ? context.colors.error : context.colors.primary;
     final bgColor = action.isDestructive
-        ? AppColors.error.withValues(alpha: 0.08)
-        : AppColors.iconBgPurple;
+        ? context.colors.error.withValues(alpha: 0.08)
+        : context.appColors.iconSoft;
 
-    return Material(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(14),
-      child: InkWell(
-        onTap: action.onTap,
+    return Opacity(
+      opacity: enabled ? 1 : 0.55,
+      child: Material(
+        color: context.colors.surface,
         borderRadius: BorderRadius.circular(14),
-        child: Ink(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(
-              color: action.isDestructive
-                  ? AppColors.error.withValues(alpha: 0.25)
-                  : AppColors.cardBorder,
+        child: InkWell(
+          onTap: enabled ? action.onTap : null,
+          borderRadius: BorderRadius.circular(14),
+          child: Ink(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(
+                color: action.isDestructive
+                    ? context.colors.error.withValues(alpha: 0.25)
+                    : context.appColors.cardBorder,
+              ),
             ),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  color: bgColor,
-                  borderRadius: BorderRadius.circular(12),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: bgColor,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: action.isLoading
+                      ? Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.4,
+                            color: color,
+                          ),
+                        )
+                      : Icon(action.icon, color: color, size: 22),
                 ),
-                child: Icon(action.icon, color: color, size: 22),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                action.label,
-                style: theme.textTheme.labelLarge?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: action.isDestructive ? AppColors.error : Colors.black87,
+                const SizedBox(height: 10),
+                Text(
+                  action.isLoading ? 'common.exporting'.tr : action.label,
+                  style: context.texts.labelLarge?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: action.isDestructive
+                        ? context.colors.error
+                        : context.colors.onSurface,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
