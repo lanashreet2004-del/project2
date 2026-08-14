@@ -11,14 +11,14 @@ class OcrRepository extends BaseRepository {
   Future<Map<String, dynamic>> extractText({
     required String imagePath,
   }) async {
-    // Placeholder — integrate local TFLite model or remote AI endpoint
+    // Placeholder — integrate local TFLite model or remote AI endpoint.
+    // Mock returns extracted text only; the image path is required by the flow.
     return {
       'id': 'ocr_${DateTime.now().millisecondsSinceEpoch}',
       'text':
           'مرحباً بكم في تطبيق مكتوب.\n\n'
           'هذا نص تجريبي مستخرج من الصورة باستخدام تقنية التعرف الضوئي على الحروف.\n'
           'يمكنك تعديل هذا النص بالضغط على زر "تعديل النص".',
-      'confidence': 0.92,
       'language': 'ar',
       'processed_at': DateTime.now().toIso8601String(),
     };

@@ -1,11 +1,11 @@
 {
-    "name": "p2",
-    "short_name": "p2",
+    "name": "Satr",
+    "short_name": "Satr",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#163E2A",
+    "theme_color": "#14532D",
+    "description": "Satr Arabic OCR",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

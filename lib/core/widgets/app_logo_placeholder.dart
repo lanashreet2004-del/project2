@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../theme/app_theme_context.dart';
+import '../constants/app_constants.dart';
 
-/// Reusable app logo placeholder widget.
+/// Official Satr application icon.
 class AppLogoPlaceholder extends StatelessWidget {
   const AppLogoPlaceholder({super.key, this.size = 96, this.iconSize = 44});
 
@@ -11,30 +11,18 @@ class AppLogoPlaceholder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final primary = context.colors.primary;
-
-    return Container(
+    return SizedBox(
       width: size,
       height: size,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [primary, context.colors.primaryContainer],
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(size * 0.22),
+        child: Image.asset(
+          AppConstants.appIconAsset,
+          width: size,
+          height: size,
+          fit: BoxFit.cover,
+          filterQuality: FilterQuality.medium,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: primary.withValues(alpha: 0.28),
-            blurRadius: 20,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
-      child: Icon(
-        Icons.document_scanner_outlined,
-        size: iconSize,
-        color: context.colors.onPrimary,
       ),
     );
   }

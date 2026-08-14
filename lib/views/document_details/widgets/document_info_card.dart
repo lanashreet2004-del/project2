@@ -8,20 +8,15 @@ class DocumentInfoCard extends StatelessWidget {
     super.key,
     required this.documentId,
     required this.savedDate,
-    required this.confidence,
     required this.statusBadges,
   });
 
   final String documentId;
   final String savedDate;
-  final double confidence;
   final List<String> statusBadges;
 
   @override
   Widget build(BuildContext context) {
-    final confidencePercent =
-        (confidence * 100).clamp(0, 100).toStringAsFixed(0);
-
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -45,11 +40,6 @@ class DocumentInfoCard extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             _InfoRow(label: 'details.savedDate'.tr, value: savedDate),
-            const SizedBox(height: 12),
-            _InfoRow(
-              label: 'details.confidence'.tr,
-              value: '$confidencePercent%',
-            ),
             const SizedBox(height: 16),
             Text(
               'details.status'.tr,

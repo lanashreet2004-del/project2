@@ -20,8 +20,6 @@ class DocumentItemTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final confidencePercent =
-        (item.confidence * 100).clamp(0, 100).toStringAsFixed(0);
     final preview = item.extractedText.trim().isEmpty
         ? 'common.noText'.tr
         : item.extractedText.replaceAll('\n', ' ');
@@ -54,23 +52,6 @@ class DocumentItemTile extends StatelessWidget {
                             _formatDateTime(item.createdAt),
                             style: context.texts.labelMedium?.copyWith(
                               color: context.colors.onSurfaceVariant,
-                            ),
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: context.colors.primaryContainer,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            '$confidencePercent%',
-                            style: context.texts.labelSmall?.copyWith(
-                              color: context.colors.onPrimaryContainer,
-                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ),

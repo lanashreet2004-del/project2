@@ -79,12 +79,12 @@ class InitialBinding extends Bindings {
       fenix: true,
     );
 
-    Get.lazyPut<UploadController>(
-      () => UploadController(
+    Get.put<UploadController>(
+      UploadController(
         repository: Get.find<UploadRepository>(),
         imageRepository: Get.find<ImageRepository>(),
       ),
-      fenix: true,
+      permanent: true,
     );
 
     Get.lazyPut<OcrRepository>(

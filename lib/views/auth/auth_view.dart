@@ -6,8 +6,9 @@ import '../../core/theme/app_theme_context.dart';
 import '../../core/utils/validators.dart';
 import '../../core/widgets/responsive_layout.dart';
 import '../../core/widgets/wavy_app_bar.dart';
+import 'widgets/auth_form_widgets.dart';
 
-/// Authentication screen — frontend-only demo sign-in.
+/// Sign-in screen — frontend-only demo session, backend-ready structure.
 class AuthView extends GetView<AuthController> {
   const AuthView({super.key});
 
@@ -18,124 +19,92 @@ class AuthView extends GetView<AuthController> {
       appBar: WavyAppBar(
         title: Text('auth.title'.tr),
       ),
-      body: ResponsiveContainer(
-        maxWidth: 480,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(16, 24, 16, 32),
-          child: Form(
-            key: controller.formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(
-                  'auth.welcomeBack'.tr,
-                  style: context.texts.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.w700,
+      body: SafeArea(
+        child: ResponsiveContainer(
+          maxWidth: 480,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(8, 16, 8, 32),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: constraints.maxHeight - 48,
                   ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'auth.demoNotice'.tr,
-                  style: context.texts.bodyMedium?.copyWith(
-                    color: context.colors.onSurfaceVariant,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 28),
-                TextFormField(
-                  controller: controller.emailController,
-                  decoration: InputDecoration(
-                    labelText: 'auth.email'.tr,
-                    prefixIcon: const Icon(Icons.email_outlined),
-                    filled: true,
-                    fillColor: context.colors.surface,
-                  ),
-                  keyboardType: TextInputType.emailAddress,
-                  textInputAction: TextInputAction.next,
-                  validator: Validators.email,
-                  enabled: !controller.isLoading.value,
-                ),
-                const SizedBox(height: 16),
-                Obx(
-                  () => TextFormField(
-                    controller: controller.passwordController,
-                    decoration: InputDecoration(
-                      labelText: 'auth.password'.tr,
-                      prefixIcon: const Icon(Icons.lock_outlined),
-                      filled: true,
-                      fillColor: context.colors.surface,
-                      suffixIcon: IconButton(
-                        onPressed: controller.togglePasswordVisibility,
-                        icon: Icon(
-                          controller.obscurePassword.value
-                              ? Icons.visibility_outlined
-                              : Icons.visibility_off_outlined,
-                        ),
-                      ),
-                    ),
-                    obscureText: controller.obscurePassword.value,
-                    textInputAction: TextInputAction.done,
-                    onFieldSubmitted: (_) => controller.signIn(),
-                    validator: (v) =>
-                        Validators.required(v, fieldName: 'auth.password'.tr),
-                    enabled: !controller.isLoading.value,
-                  ),
-                ),
-                Obx(() {
-                  final error = controller.errorMessage.value;
-                  if (error == null) return const SizedBox.shrink();
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 16),
-                    child: Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: context.colors.error.withValues(alpha: 0.08),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: context.colors.error.withValues(alpha: 0.25),
-                        ),
-                      ),
-                      child: Text(
-                        error,
-                        style: context.texts.bodySmall?.copyWith(
-                          color: context.colors.error,
-                        ),
-                      ),
-                    ),
-                  );
-                }),
-                const SizedBox(height: 24),
-                Obx(
-                  () => SizedBox(
-                    height: 48,
-                    child: FilledButton(
-                      onPressed:
-                          controller.isLoading.value ? null : controller.signIn,
-                      style: FilledButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                      ),
-                      child: controller.isLoading.value
-                          ? SizedBox(
-                              width: 22,
-                              height: 22,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: context.colors.onPrimary,
+                  child: AuthFadeIn(
+                    child: Obx(() {
+                      final loading = controller.isLoading.value;
+                      final error = controller.errorMessage.value;
+
+                      return AutofillGroup(
+                        child: Form(
+                          key: controller.formKey,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              AuthHeader(
+                                title: 'auth.welcomeBack'.tr,
+                                subtitle: 'auth.signInSubtitle'.tr,
                               ),
-                            )
-                          : Text(
-                              'auth.signIn'.tr,
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.w600),
-                            ),
-                    ),
+                              const SizedBox(height: 32),
+                              TextFormField(
+                                controller: controller.emailController,
+                                decoration: InputDecoration(
+                                  labelText: 'auth.email'.tr,
+                                  hintText: 'auth.emailHint'.tr,
+                                  prefixIcon: const Icon(Icons.email_outlined),
+                                ),
+                                keyboardType: TextInputType.emailAddress,
+                                textInputAction: TextInputAction.next,
+                                autofillHints: const [AutofillHints.email],
+                                validator: Validators.email,
+                                enabled: !loading,
+                              ),
+                              const SizedBox(height: 16),
+                              AuthPasswordField(
+                                controller: controller.passwordController,
+                                label: 'auth.password'.tr,
+                                obscure: controller.obscurePassword.value,
+                                onToggleVisibility:
+                                    controller.togglePasswordVisibility,
+                                validator: Validators.password,
+                                enabled: !loading,
+                                onSubmitted: (_) => controller.signIn(),
+                              ),
+                              Align(
+                                alignment: AlignmentDirectional.centerEnd,
+                                child: TextButton(
+                                  onPressed: loading
+                                      ? null
+                                      : controller
+                                          .showForgotPasswordUnavailable,
+                                  child: Text('auth.forgotPassword'.tr),
+                                ),
+                              ),
+                              if (error != null) ...[
+                                AuthErrorBanner(message: error),
+                                const SizedBox(height: 16),
+                              ],
+                              AuthSubmitButton(
+                                label: 'auth.signIn'.tr,
+                                isLoading: loading,
+                                onPressed: controller.signIn,
+                              ),
+                              const SizedBox(height: 16),
+                              AuthSwitchPrompt(
+                                prompt: 'auth.noAccount'.tr,
+                                actionLabel: 'auth.signUp'.tr,
+                                onAction:
+                                    loading ? null : controller.openSignUp,
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }),
                   ),
                 ),
-              ],
-            ),
+              );
+            },
           ),
         ),
       ),

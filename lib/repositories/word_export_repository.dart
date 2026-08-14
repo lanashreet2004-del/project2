@@ -45,8 +45,6 @@ class WordExportRepository extends BaseRepository {
               .buffer
               .asUint8List();
 
-      final confidencePercent =
-          (document.confidence * 100).clamp(0, 100).toStringAsFixed(0);
       final savedDate = _formatDateTime(document.createdAt);
       final documentTitle = _documentTitle(document.extractedText);
 
@@ -81,7 +79,6 @@ class WordExportRepository extends BaseRepository {
         ..add(_infoLine('Document Title', documentTitle))
         ..add(_infoLine('Document ID', document.id))
         ..add(_infoLine('Created Date', savedDate))
-        ..add(_infoLine('Confidence Score', '$confidencePercent%'))
         ..add(_spacerParagraph())
         ..add(
           _paragraph(

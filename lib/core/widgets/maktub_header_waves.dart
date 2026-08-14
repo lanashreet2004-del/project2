@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../theme/app_colors.dart';
 
-/// Bottom clip for Maktub headers — smooth wave into page content.
+/// Bottom clip for Satr headers — smooth wave into page content.
 class MaktubHeaderWaveClipper extends CustomClipper<Path> {
   const MaktubHeaderWaveClipper();
 

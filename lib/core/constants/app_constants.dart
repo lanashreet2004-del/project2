@@ -2,9 +2,10 @@
 class AppConstants {
   AppConstants._();
 
-  static const String appName = 'Maktub';
-  static const String appDisplayName = 'Maktub OCR';
-  static const String appTagline = 'AI Arabic OCR';
+  static const String appName = 'Satr';
+  static const String appDisplayName = 'Satr';
+  static const String appTagline = 'SATR • OCR';
+  static const String appIconAsset = 'assets/images/branding/app_icon.png';
   static const String appVersion = '1.0.0';
 
   // Onboarding assets
@@ -19,4 +20,5 @@ class AppConstants {
 
   // Animation durations
   static const Duration animationDuration = Duration(milliseconds: 300);
+  static const Duration splashDuration = Duration(milliseconds: 1800);
 }

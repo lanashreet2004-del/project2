@@ -1,5 +1,8 @@
 /// English UI strings for GetX translations.
 const Map<String, String> enTranslations = {
+  'app.name': 'Satr',
+  'app.tagline': 'SATR  •  OCR',
+
   // Common
   'common.cancel': 'Cancel',
   'common.confirm': 'Confirm',
@@ -62,7 +65,7 @@ const Map<String, String> enTranslations = {
   'settings.account': 'Account',
   'settings.appearance': 'Appearance',
   'settings.theme': 'Theme',
-  'settings.themeHint': 'Choose how Maktub looks on this device.',
+  'settings.themeHint': 'Choose how Satr looks on this device.',
   'settings.themeCurrent': 'Current: @theme',
   'settings.themeLight': 'Light',
   'settings.themeDark': 'Dark',
@@ -70,7 +73,7 @@ const Map<String, String> enTranslations = {
   'settings.language': 'Language',
   'settings.languageHint': 'Choose the app language. Layout direction updates automatically.',
   'settings.about': 'About',
-  'settings.aboutMaktub': 'About Maktub',
+  'settings.aboutApp': 'About Satr',
   'settings.accountManage': 'Tap to manage your account',
   'settings.demoNotice':
       'Account features use a local demo session until the backend is ready.',
@@ -81,18 +84,41 @@ const Map<String, String> enTranslations = {
 
   // Auth
   'auth.title': 'Sign In',
-  'auth.welcomeBack': 'Welcome back',
+  'auth.welcomeBack': 'Welcome Back',
+  'auth.signInSubtitle': 'Sign in to continue to Satr',
   'auth.demoNotice': 'Frontend demo login — no backend API is called.',
   'auth.email': 'Email',
+  'auth.emailHint': 'example@email.com',
   'auth.password': 'Password',
+  'auth.confirmPassword': 'Confirm Password',
+  'auth.fullName': 'Full Name',
+  'auth.fullNameHint': 'Your name',
   'auth.signIn': 'Sign In',
+  'auth.signUp': 'Sign Up',
   'auth.signingIn': 'Signing in...',
+  'auth.createAccount': 'Create Account',
+  'auth.signUpTitle': 'Create an Account',
+  'auth.signUpSubtitle': 'Start using Satr today',
+  'auth.noAccount': "Don't have an account?",
+  'auth.hasAccount': 'Already have an account?',
+  'auth.forgotPassword': 'Forgot Password?',
+  'auth.forgotUnavailable':
+      'Password recovery is not available yet.',
+  'auth.showPassword': 'Show password',
+  'auth.hidePassword': 'Hide password',
   'auth.successTitle': 'Signed in',
   'auth.successBody': 'Local demo session started.',
+  'auth.signUpSuccessTitle': 'Account created',
+  'auth.signUpSuccessBody': 'Local demo session started.',
   'auth.errorTitle': 'Sign in failed',
+  'auth.errorGeneric':
+      'Unable to sign in. Please check your credentials and try again.',
+  'auth.signUpErrorGeneric':
+      'Unable to create an account. Please try again.',
   'auth.validation.emailRequired': 'Email is required',
   'auth.validation.emailInvalid': 'Enter a valid email',
   'auth.validation.passwordRequired': 'Password is required',
+  'auth.validation.passwordMismatch': 'Passwords do not match',
   'auth.validation.fieldRequired': '@field is required',
   'auth.validation.minLength': '@field must be at least @min characters',
 
@@ -187,7 +213,6 @@ const Map<String, String> enTranslations = {
       'Open a document from Recent Documents or My Documents, or scan a new one.',
   'result.saveDocument': 'Save Document',
   'result.editText': 'Edit Text',
-  'result.confidence': 'Confidence',
   'result.processed': 'Processed',
   'result.savedTitle': 'Saved',
   'result.savedBody': 'Document saved to My Documents.',
@@ -231,7 +256,6 @@ const Map<String, String> enTranslations = {
   'details.info': 'Document Information',
   'details.id': 'ID',
   'details.savedDate': 'Saved Date',
-  'details.confidence': 'Confidence',
   'details.status': 'Status',
   'details.statistics': 'Statistics',
   'details.characters': 'Characters',

@@ -14,7 +14,7 @@ class AuthRepository extends BaseRepository {
     required String email,
     required String password,
   }) async {
-    // Frontend-only session — replace with Dio when backend is ready.
+    // Backend-dependent — replace with Dio when the login contract is ready.
     // final response = await apiService.post(
     //   ApiConstants.auth,
     //   data: {'email': email, 'password': password},
@@ -22,6 +22,31 @@ class AuthRepository extends BaseRepository {
     final trimmedEmail = email.trim();
     final name = _displayNameFromEmail(trimmedEmail);
     final user = UserModel(id: 'local_user', email: trimmedEmail, name: name);
+    await _persistSession(user, token: 'placeholder_token');
+    return user;
+  }
+
+  /// Local demo registration. Persists the same frontend session as [signIn].
+  /// Backend-dependent: do not invent an endpoint until the contract exists.
+  Future<UserModel> signUp({
+    required String name,
+    required String email,
+    required String password,
+  }) async {
+    // Backend-dependent — plug in when the registration contract is available.
+    // final response = await apiService.post(
+    //   ApiConstants.auth,
+    //   data: {'name': name, 'email': email, 'password': password},
+    // );
+    final trimmedEmail = email.trim();
+    final trimmedName = name.trim();
+    final user = UserModel(
+      id: 'local_user',
+      email: trimmedEmail,
+      name: trimmedName.isEmpty
+          ? _displayNameFromEmail(trimmedEmail)
+          : trimmedName,
+    );
     await _persistSession(user, token: 'placeholder_token');
     return user;
   }

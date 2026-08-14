@@ -59,8 +59,6 @@ class PdfExportRepository extends BaseRepository {
       final latinRegularFont = _getLatinRegularFont();
       final latinBoldFont = _getLatinBoldFont();
       final imageBytes = await _loadImageBytes(document.imagePath);
-      final confidencePercent =
-          (document.confidence * 100).clamp(0, 100).toStringAsFixed(0);
       final savedDate = _formatDateTime(document.createdAt);
       final stats = _computeTextStats(document.extractedText);
       final documentTitle = _documentTitle(document.extractedText);
@@ -108,7 +106,6 @@ class PdfExportRepository extends BaseRepository {
                 _InfoRow('Document Title', documentTitle),
                 _InfoRow('Document ID', document.id),
                 _InfoRow('Created Date', savedDate),
-                _InfoRow('Confidence Score', '$confidencePercent%'),
                 _InfoRow('Status', status),
               ],
             ),
@@ -178,7 +175,6 @@ class PdfExportRepository extends BaseRepository {
       id: 'arabic_pdf_test',
       imagePath: '',
       extractedText: arabicText,
-      confidence: 0.95,
       createdAt: DateTime.now(),
     );
 
@@ -212,8 +208,6 @@ class PdfExportRepository extends BaseRepository {
       final stats = _computeTextStats(document.extractedText);
       final documentTitle = _documentTitle(document.extractedText);
       final savedDate = _formatDateTime(document.createdAt);
-      final confidencePercent =
-          (document.confidence * 100).clamp(0, 100).toStringAsFixed(0);
 
       final pdf = pw.Document();
 
@@ -258,7 +252,6 @@ class PdfExportRepository extends BaseRepository {
                 _InfoRow('عنوان المستند', documentTitle),
                 _InfoRow('معرف المستند', document.id),
                 _InfoRow('تاريخ الإنشاء', savedDate),
-                _InfoRow('نسبة الثقة', '$confidencePercent%'),
                 _InfoRow('الحالة', status),
               ],
             ),

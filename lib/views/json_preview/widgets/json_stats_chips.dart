@@ -9,19 +9,14 @@ class JsonStatsChips extends StatelessWidget {
     required this.characterCount,
     required this.wordCount,
     required this.lineCount,
-    required this.confidence,
   });
 
   final int characterCount;
   final int wordCount;
   final int lineCount;
-  final double confidence;
 
   @override
   Widget build(BuildContext context) {
-    final confidencePercent =
-        (confidence * 100).clamp(0, 100).toStringAsFixed(0);
-
     return Wrap(
       spacing: 8,
       runSpacing: 8,
@@ -32,10 +27,6 @@ class JsonStatsChips extends StatelessWidget {
         ),
         _StatChip(label: 'details.words'.tr, value: wordCount.toString()),
         _StatChip(label: 'details.lines'.tr, value: lineCount.toString()),
-        _StatChip(
-          label: 'details.confidence'.tr,
-          value: '$confidencePercent%',
-        ),
       ],
     );
   }

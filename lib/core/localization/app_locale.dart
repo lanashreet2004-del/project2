@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Supported UI languages for Maktub.
+/// Supported UI languages for Satr.
 enum AppLocale {
   arabic,
   english;

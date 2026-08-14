@@ -2,32 +2,35 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'app_colors.dart';
+import 'app_fonts.dart';
 
-/// Material 3 light/dark themes with Arabic typography and component styles.
+/// Material 3 light/dark themes with locale-aware typography and component styles.
 class AppTheme {
   AppTheme._();
 
-  static const String fontFamily = 'NotoSansArabic';
   static const double radiusSm = 10;
   static const double radiusMd = 12;
   static const double radiusLg = 14;
   static const double radiusXl = 16;
   static const double buttonHeight = 48;
 
-  static ThemeData get light => _build(Brightness.light);
+  static ThemeData light({required bool isArabic}) =>
+      _build(Brightness.light, isArabic: isArabic);
 
-  static ThemeData get dark => _build(Brightness.dark);
+  static ThemeData dark({required bool isArabic}) =>
+      _build(Brightness.dark, isArabic: isArabic);
 
-  static ThemeData _build(Brightness brightness) {
+  static ThemeData _build(Brightness brightness, {required bool isArabic}) {
     final isDark = brightness == Brightness.dark;
     final colorScheme = isDark ? _darkScheme : _lightScheme;
     final semantics = isDark ? AppSemanticColors.dark : AppSemanticColors.light;
-    final textTheme = _textTheme(colorScheme);
+    final textTheme = _textTheme(colorScheme, isArabic: isArabic);
+    final bodyFamily = AppFonts.bodyFamily(isArabic: isArabic);
 
     return ThemeData(
       useMaterial3: true,
       brightness: brightness,
-      fontFamily: fontFamily,
+      fontFamily: bodyFamily,
       colorScheme: colorScheme,
       scaffoldBackgroundColor:
           isDark ? AppColors.darkScaffold : AppColors.lightScaffold,
@@ -321,34 +324,41 @@ class AppTheme {
     );
   }
 
-  static TextTheme _textTheme(ColorScheme scheme) {
-    TextStyle base(double size, FontWeight weight, {double height = 1.4}) {
-      return TextStyle(
-        fontFamily: fontFamily,
+  static TextTheme _textTheme(ColorScheme scheme, {required bool isArabic}) {
+    TextStyle base(
+      double size,
+      FontWeight weight, {
+      double height = 1.4,
+      required bool heading,
+    }) {
+      final style = TextStyle(
         fontSize: size,
         fontWeight: weight,
         height: height,
         color: scheme.onSurface,
         letterSpacing: 0,
       );
+      return heading
+          ? AppFonts.heading(style, isArabic: isArabic)
+          : AppFonts.body(style, isArabic: isArabic);
     }
 
     return TextTheme(
-      displayLarge: base(32, FontWeight.w700, height: 1.25),
-      displayMedium: base(28, FontWeight.w700, height: 1.25),
-      displaySmall: base(24, FontWeight.w700, height: 1.3),
-      headlineLarge: base(22, FontWeight.w700, height: 1.3),
-      headlineMedium: base(20, FontWeight.w700, height: 1.3),
-      headlineSmall: base(18, FontWeight.w700, height: 1.35),
-      titleLarge: base(18, FontWeight.w700, height: 1.35),
-      titleMedium: base(16, FontWeight.w700, height: 1.35),
-      titleSmall: base(14, FontWeight.w600, height: 1.35),
-      bodyLarge: base(16, FontWeight.w400, height: 1.7),
-      bodyMedium: base(14, FontWeight.w400, height: 1.55),
-      bodySmall: base(12, FontWeight.w400, height: 1.45),
-      labelLarge: base(14, FontWeight.w600, height: 1.3),
-      labelMedium: base(12, FontWeight.w600, height: 1.3),
-      labelSmall: base(11, FontWeight.w600, height: 1.25),
+      displayLarge: base(32, FontWeight.w700, height: 1.25, heading: true),
+      displayMedium: base(28, FontWeight.w700, height: 1.25, heading: true),
+      displaySmall: base(24, FontWeight.w700, height: 1.3, heading: true),
+      headlineLarge: base(22, FontWeight.w700, height: 1.3, heading: true),
+      headlineMedium: base(20, FontWeight.w700, height: 1.3, heading: true),
+      headlineSmall: base(18, FontWeight.w700, height: 1.35, heading: true),
+      titleLarge: base(18, FontWeight.w700, height: 1.35, heading: true),
+      titleMedium: base(16, FontWeight.w700, height: 1.35, heading: true),
+      titleSmall: base(14, FontWeight.w600, height: 1.35, heading: false),
+      bodyLarge: base(16, FontWeight.w400, height: 1.7, heading: false),
+      bodyMedium: base(14, FontWeight.w400, height: 1.55, heading: false),
+      bodySmall: base(12, FontWeight.w400, height: 1.45, heading: false),
+      labelLarge: base(14, FontWeight.w600, height: 1.3, heading: false),
+      labelMedium: base(12, FontWeight.w600, height: 1.3, heading: false),
+      labelSmall: base(11, FontWeight.w600, height: 1.25, heading: false),
     );
   }
 }

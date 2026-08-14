@@ -38,7 +38,6 @@ class JsonExportRepository extends BaseRepository {
       },
       'ocrResult': {
         'text': document.extractedText,
-        'confidence': document.confidence,
         'wordCount': wordCount,
         'characterCount': characterCount,
         'lineCount': lineCount,
@@ -68,11 +67,6 @@ class JsonExportRepository extends BaseRepository {
     final text = ocrResult?['text'] as String?;
     if (text == null || text.trim().isEmpty) {
       errors.add('Extracted text is empty.');
-    }
-
-    final confidence = ocrResult?['confidence'];
-    if (confidence is! num || confidence < 0 || confidence > 1) {
-      errors.add('Confidence must be a number between 0 and 1.');
     }
 
     return JsonExportValidationResult(

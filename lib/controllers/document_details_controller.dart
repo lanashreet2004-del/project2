@@ -43,6 +43,24 @@ class DocumentDetailsController extends BaseController {
   final RxBool isExportingPdf = false.obs;
   final RxBool isExportingWord = false.obs;
 
+  @override
+  void onInit() {
+    super.onInit();
+    _ensureDurableImage();
+  }
+
+  /// Migrates a still-valid temp/cache image after the document is opened.
+  /// Does not run during camera/gallery capture.
+  Future<void> _ensureDurableImage() async {
+    final current = document.value;
+    if (current == null) return;
+
+    final persisted = await _repository.ensurePersistedImage(current);
+    if (persisted.imagePath != current.imagePath) {
+      document.value = persisted;
+    }
+  }
+
   List<String> get statusBadges {
     final badges = <String>['details.badgeProcessed'];
     if (isEdited.value) badges.add('details.badgeEdited');
@@ -83,8 +101,8 @@ class DocumentDetailsController extends BaseController {
     if (updated is! OcrResultModel) return;
 
     final saved = current.copyWith(extractedText: updated.extractedText);
-    await runAsync(() => _repository.saveDocument(saved));
-    document.value = saved;
+    final persisted = await runAsync(() => _repository.saveDocument(saved));
+    document.value = persisted ?? saved;
     isEdited.value = true;
   }
 
@@ -297,7 +315,6 @@ class DocumentDetailsController extends BaseController {
     return OcrResultModel(
       id: history.id,
       extractedText: history.extractedText,
-      confidence: history.confidence,
       processedAt: history.createdAt,
       imagePath: history.imagePath,
     );

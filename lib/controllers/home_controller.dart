@@ -79,6 +79,7 @@ class HomeController extends BaseController {
   @override
   void onReady() {
     super.onReady();
+    _recoverLostPickerImage();
     loadDocuments();
   }
 
@@ -136,8 +137,8 @@ class HomeController extends BaseController {
 
   Future<void> pickFromGallery() async {
     final path = await runAsync(() => _imageRepository.pickFromGallery());
-    if (path != null) {
-      _openImageEditor(path, ImagePickSource.gallery);
+    if (ImageRepository.isReadableImage(path)) {
+      _openImageEditor(path!, ImagePickSource.gallery);
     } else if (hasError) {
       _showPickError('home.gallery'.tr);
     }
@@ -145,10 +146,20 @@ class HomeController extends BaseController {
 
   Future<void> pickFromCamera() async {
     final path = await runAsync(() => _imageRepository.pickFromCamera());
-    if (path != null) {
-      _openImageEditor(path, ImagePickSource.camera);
+    if (ImageRepository.isReadableImage(path)) {
+      _openImageEditor(path!, ImagePickSource.camera);
     } else if (hasError) {
       _showPickError('home.camera'.tr);
+    }
+  }
+
+  Future<void> _recoverLostPickerImage() async {
+    try {
+      final path = await _imageRepository.retrieveLostPickerImage();
+      if (!ImageRepository.isReadableImage(path)) return;
+      _openImageEditor(path!, ImagePickSource.camera);
+    } catch (_) {
+      // Recovery is best-effort; a failed recover should not block Home.
     }
   }
 

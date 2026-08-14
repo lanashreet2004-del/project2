@@ -190,9 +190,9 @@ class SettingsView extends GetView<SettingsController> {
               Card(
                 child: ListTile(
                   leading: const Icon(Icons.info_outline),
-                  title: Text('settings.aboutMaktub'.tr),
+                  title: Text('settings.aboutApp'.tr),
                   subtitle: Text(
-                    '${AppConstants.appName} • Version ${AppConstants.appVersion}',
+                    '${'app.name'.tr} • Version ${AppConstants.appVersion}',
                   ),
                 ),
               ),

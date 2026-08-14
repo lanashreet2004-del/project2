@@ -67,7 +67,6 @@ class ResultView extends GetView<ResultController> {
                     ResultImagePreview(imagePath: result.imagePath),
                     const SizedBox(height: 16),
                     ResultMetadataRow(
-                      confidence: result.confidence,
                       processedAt: result.processedAt,
                     ),
                     const SizedBox(height: 16),

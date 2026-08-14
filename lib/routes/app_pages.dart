@@ -10,6 +10,7 @@ import '../core/bindings/json_preview_binding.dart';
 import '../core/bindings/word_files_binding.dart';
 import '../core/bindings/main_shell_binding.dart';
 import '../core/bindings/onboarding_binding.dart';
+import '../core/bindings/splash_binding.dart';
 import '../core/bindings/processing_binding.dart';
 import '../core/bindings/profile_binding.dart';
 import '../core/bindings/result_binding.dart';
@@ -19,6 +20,7 @@ import '../core/constants/storage_keys.dart';
 import '../core/navigation/main_navigation.dart';
 import '../core/services/storage_service.dart';
 import '../views/auth/auth_view.dart';
+import '../views/auth/sign_up_view.dart';
 import '../views/document_details/document_details_view.dart';
 import '../views/document_details/document_image_preview_view.dart';
 import '../views/documents/documents_view.dart';
@@ -28,6 +30,7 @@ import '../views/json_preview/json_preview_view.dart';
 import '../views/word_files/word_files_view.dart';
 import '../views/main/main_shell_view.dart';
 import '../views/onboarding/onboarding_view.dart';
+import '../views/splash/splash_view.dart';
 import '../views/processing/processing_view.dart';
 import '../views/profile/profile_view.dart';
 import '../views/result/result_view.dart';
@@ -40,7 +43,10 @@ import 'app_routes.dart';
 class AppPages {
   AppPages._();
 
-  static String get initial {
+  static String get initial => AppRoutes.splash;
+
+  /// Same destination as before splash was added.
+  static String get afterSplash {
     final storage = StorageService();
     final isComplete =
         storage.read<bool>(StorageKeys.onboardingComplete) ?? false;
@@ -48,6 +54,13 @@ class AppPages {
   }
 
   static final routes = <GetPage>[
+    GetPage(
+      name: AppRoutes.splash,
+      page: () => const SplashView(),
+      binding: SplashBinding(),
+      transition: Transition.fadeIn,
+      transitionDuration: const Duration(milliseconds: 280),
+    ),
     GetPage(
       name: AppRoutes.onboarding,
       page: () => const OnboardingView(),
@@ -65,6 +78,12 @@ class AppPages {
     GetPage(
       name: AppRoutes.auth,
       page: () => const AuthView(),
+      binding: AuthBinding(),
+      transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: AppRoutes.signUp,
+      page: () => const SignUpView(),
       binding: AuthBinding(),
       transition: Transition.rightToLeft,
     ),

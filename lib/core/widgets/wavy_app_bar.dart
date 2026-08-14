@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import '../theme/app_theme_context.dart';
 import 'maktub_header_waves.dart';
 
-/// Deep-green layered wavy AppBar used across Maktub screens.
+/// Deep-green layered wavy AppBar used across Satr screens.
 ///
 /// Drop-in replacement for [AppBar] that preserves leading/title/actions.
 class WavyAppBar extends StatelessWidget implements PreferredSizeWidget {

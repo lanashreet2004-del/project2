@@ -30,24 +30,32 @@ class ImageEditorController extends BaseController {
   static const double maxBrightness = 2.0;
 
   @override
-  void onInit() {
-    super.onInit();
+  void onReady() {
+    super.onReady();
     _initFromArguments();
   }
 
   Future<void> _initFromArguments() async {
-    final args = Get.arguments as Map<String, dynamic>?;
-    final path = args?['filePath'] as String?;
-    pickSource.value = ImagePickSource.fromString(args?['source'] as String?);
+    final args = Get.arguments;
+    Map<String, dynamic>? map;
+    if (args is Map<String, dynamic>) {
+      map = args;
+    } else if (args is Map) {
+      map = Map<String, dynamic>.from(args);
+    }
 
-    if (path == null) {
+    final path = map?['filePath'] as String?;
+    pickSource.value = ImagePickSource.fromString(map?['source'] as String?);
+
+    if (!ImageRepository.isReadableImage(path)) {
       setError('editor.noImageSelected'.tr);
       return;
     }
 
-    await runAsync(() async {
-      workingImagePath.value = await _editRepository.createWorkingCopy(path);
-    });
+    final working = await runAsync(
+      () => _editRepository.createWorkingCopy(path!),
+    );
+    if (working != null) workingImagePath.value = working;
   }
 
   void setBrightness(double value) => brightness.value = value;
@@ -119,8 +127,8 @@ class ImageEditorController extends BaseController {
           : _imageRepository.pickFromGallery();
     });
 
-    if (path != null) {
-      final workingCopy = await _editRepository.createWorkingCopy(path);
+    if (ImageRepository.isReadableImage(path)) {
+      final workingCopy = await _editRepository.createWorkingCopy(path!);
       workingImagePath.value = workingCopy;
       brightness.value = 1.0;
     } else if (hasError) {
@@ -140,11 +148,17 @@ class ImageEditorController extends BaseController {
       () => _editRepository.finalizeEdits(path, brightness.value),
     );
 
-    if (finalPath == null) return;
+    if (finalPath == null || !ImageRepository.isReadableImage(finalPath)) return;
 
     _uploadController.setEditedImage(finalPath, source: pickSource.value);
     // Replace editor so back from Result returns to Home, not the editor.
-    Get.offNamed(AppRoutes.processing);
+    Get.offNamed(
+      AppRoutes.processing,
+      arguments: {
+        'imagePath': finalPath,
+        'source': pickSource.value.routeValue,
+      },
+    );
   }
 }
 

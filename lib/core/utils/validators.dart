@@ -31,4 +31,25 @@ class Validators {
     }
     return null;
   }
+
+  static String? fullName(String? value, {int min = 2}) {
+    final requiredError = required(value, fieldName: 'auth.fullName'.tr);
+    if (requiredError != null) return requiredError;
+    return minLength(value?.trim(), min, fieldName: 'auth.fullName'.tr);
+  }
+
+  static String? password(String? value, {int min = 8}) {
+    final requiredError = required(value, fieldName: 'auth.password'.tr);
+    if (requiredError != null) return requiredError;
+    return minLength(value, min, fieldName: 'auth.password'.tr);
+  }
+
+  static String? confirmPassword(String? value, String password) {
+    final requiredError = required(value, fieldName: 'auth.confirmPassword'.tr);
+    if (requiredError != null) return requiredError;
+    if (value != password) {
+      return 'auth.validation.passwordMismatch'.tr;
+    }
+    return null;
+  }
 }

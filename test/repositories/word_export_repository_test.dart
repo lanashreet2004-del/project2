@@ -3,35 +3,36 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:p2/core/constants/export_constants.dart';
 import 'package:p2/core/services/api_service.dart';
 import 'package:p2/core/services/storage_service.dart';
 import 'package:p2/models/history_model.dart';
 import 'package:p2/repositories/word_export_repository.dart';
+import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 
-class _FakePathProvider extends PathProviderPlatform {
-  @override
-  Future<String?> getApplicationDocumentsPath() async {
-    return Directory.systemTemp.path;
-  }
-}
+import '../helpers/offline_test_support.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
+  late Directory docsDir;
   late WordExportRepository repository;
 
   setUpAll(() async {
-    PathProviderPlatform.instance = _FakePathProvider();
+    docsDir = await createTestDocumentsDir();
+    PathProviderPlatform.instance = FakePathProvider(docsDir.path);
     await GetStorage.init('word_export_test');
   });
 
   setUp(() {
     repository = WordExportRepository(
       apiService: ApiService(),
-      storageService: StorageService(),
+      storageService: StorageService(box: GetStorage('word_export_test')),
     );
+  });
+
+  tearDownAll(() async {
+    await tryDeleteTestRoot(docsDir);
   });
 
   test('loads bundled fonts for Word export', () async {
@@ -55,9 +56,9 @@ void main() {
       id: 'test_arabic_word',
       imagePath: '',
       extractedText: arabicText,
-      confidence: 0.92,
       createdAt: DateTime(2026, 6, 12, 14, 30),
     );
+    expectNoConfidenceFields(document.toJson());
 
     final bytes = await repository.generateDocxBytes(document);
 

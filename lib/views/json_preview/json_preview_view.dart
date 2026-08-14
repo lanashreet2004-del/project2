@@ -47,7 +47,6 @@ class JsonPreviewView extends GetView<JsonPreviewController> {
                       characterCount: args.characterCount,
                       wordCount: args.wordCount,
                       lineCount: args.lineCount,
-                      confidence: args.document.confidence,
                     ),
                     const SizedBox(height: 16),
                     Align(

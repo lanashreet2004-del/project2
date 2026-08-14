@@ -1,5 +1,8 @@
 /// Arabic (MSA) UI strings for GetX translations.
 const Map<String, String> arTranslations = {
+  'app.name': 'سطر',
+  'app.tagline': 'SATR  •  OCR',
+
   // Common
   'common.cancel': 'إلغاء',
   'common.confirm': 'تأكيد',
@@ -62,7 +65,7 @@ const Map<String, String> arTranslations = {
   'settings.account': 'الحساب',
   'settings.appearance': 'المظهر',
   'settings.theme': 'السمة',
-  'settings.themeHint': 'اختر مظهر مكتوب على هذا الجهاز.',
+  'settings.themeHint': 'اختر مظهر سطر على هذا الجهاز.',
   'settings.themeCurrent': 'الحالي: @theme',
   'settings.themeLight': 'فاتح',
   'settings.themeDark': 'داكن',
@@ -71,7 +74,7 @@ const Map<String, String> arTranslations = {
   'settings.languageHint':
       'اختر لغة التطبيق. يتغيّر اتجاه الواجهة تلقائياً.',
   'settings.about': 'حول',
-  'settings.aboutMaktub': 'حول مكتوب',
+  'settings.aboutApp': 'حول سطر',
   'settings.accountManage': 'اضغط لإدارة حسابك',
   'settings.demoNotice':
       'ميزات الحساب تستخدم جلسة تجريبية محلية حتى يصبح الخادم جاهزاً.',
@@ -83,18 +86,41 @@ const Map<String, String> arTranslations = {
   // Auth
   'auth.title': 'تسجيل الدخول',
   'auth.welcomeBack': 'مرحباً بعودتك',
+  'auth.signInSubtitle': 'سجّل الدخول للمتابعة إلى سطر',
   'auth.demoNotice':
       'تسجيل دخول تجريبي للواجهة — لا يتم استدعاء واجهة برمجة التطبيقات.',
   'auth.email': 'البريد الإلكتروني',
+  'auth.emailHint': 'example@email.com',
   'auth.password': 'كلمة المرور',
+  'auth.confirmPassword': 'تأكيد كلمة المرور',
+  'auth.fullName': 'الاسم الكامل',
+  'auth.fullNameHint': 'اسمك',
   'auth.signIn': 'تسجيل الدخول',
+  'auth.signUp': 'إنشاء حساب',
   'auth.signingIn': 'جارٍ تسجيل الدخول...',
+  'auth.createAccount': 'إنشاء حساب',
+  'auth.signUpTitle': 'إنشاء حساب',
+  'auth.signUpSubtitle': 'ابدأ استخدام سطر اليوم',
+  'auth.noAccount': 'ليس لديك حساب؟',
+  'auth.hasAccount': 'لديك حساب بالفعل؟',
+  'auth.forgotPassword': 'نسيت كلمة المرور؟',
+  'auth.forgotUnavailable':
+      'استعادة كلمة المرور غير متاحة حالياً.',
+  'auth.showPassword': 'إظهار كلمة المرور',
+  'auth.hidePassword': 'إخفاء كلمة المرور',
   'auth.successTitle': 'تم تسجيل الدخول',
   'auth.successBody': 'تم بدء الجلسة التجريبية المحلية.',
+  'auth.signUpSuccessTitle': 'تم إنشاء الحساب',
+  'auth.signUpSuccessBody': 'تم بدء الجلسة التجريبية المحلية.',
   'auth.errorTitle': 'فشل تسجيل الدخول',
+  'auth.errorGeneric':
+      'تعذّر تسجيل الدخول. يرجى التحقق من بياناتك والمحاولة مرة أخرى.',
+  'auth.signUpErrorGeneric':
+      'تعذّر إنشاء الحساب. يرجى المحاولة مرة أخرى.',
   'auth.validation.emailRequired': 'البريد الإلكتروني مطلوب',
   'auth.validation.emailInvalid': 'أدخل بريداً إلكترونياً صالحاً',
   'auth.validation.passwordRequired': 'كلمة المرور مطلوبة',
+  'auth.validation.passwordMismatch': 'كلمتا المرور غير متطابقتين',
   'auth.validation.fieldRequired': '@field مطلوب',
   'auth.validation.minLength':
       'يجب أن يحتوي @field على @min أحرف على الأقل',
@@ -189,7 +215,6 @@ const Map<String, String> arTranslations = {
       'افتح مستنداً من المستندات الأخيرة أو مستنداتي، أو امسح مستنداً جديداً.',
   'result.saveDocument': 'حفظ المستند',
   'result.editText': 'تعديل النص',
-  'result.confidence': 'الثقة',
   'result.processed': 'تمت المعالجة',
   'result.savedTitle': 'تم الحفظ',
   'result.savedBody': 'تم حفظ المستند في مستنداتي.',
@@ -233,7 +258,6 @@ const Map<String, String> arTranslations = {
   'details.info': 'معلومات المستند',
   'details.id': 'المعرّف',
   'details.savedDate': 'تاريخ الحفظ',
-  'details.confidence': 'الثقة',
   'details.status': 'الحالة',
   'details.statistics': 'الإحصائيات',
   'details.characters': 'الأحرف',

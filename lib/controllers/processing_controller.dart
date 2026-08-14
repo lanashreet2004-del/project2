@@ -1,6 +1,8 @@
 import 'package:get/get.dart';
 
+import '../models/image_pick_source.dart';
 import '../repositories/ocr_repository.dart';
+import '../repositories/image_repository.dart';
 import '../routes/app_routes.dart';
 import 'base_controller.dart';
 import 'upload_controller.dart';
@@ -28,8 +30,8 @@ class ProcessingController extends BaseController {
   ];
 
   @override
-  void onInit() {
-    super.onInit();
+  void onReady() {
+    super.onReady();
     startProcessing();
   }
 
@@ -38,12 +40,21 @@ class ProcessingController extends BaseController {
     clearError();
     canCancel.value = true;
 
-    final imagePath = _uploadController.editedImagePath.value;
-    if (imagePath == null) {
+    final resolvedPath = _resolveImagePath();
+    if (!ImageRepository.isReadableImage(resolvedPath)) {
       hasFailed.value = true;
       statusText.value = 'processing.failed';
       setError('processing.noImage'.tr);
       return;
+    }
+    final imagePath = resolvedPath!;
+
+    if (_uploadController.editedImagePath.value != imagePath) {
+      _uploadController.setEditedImage(
+        imagePath,
+        source: _uploadController.imageSource.value ??
+            ImagePickSource.fromString(_routeArg('source')),
+      );
     }
 
     await runAsync(() async {
@@ -53,7 +64,8 @@ class ProcessingController extends BaseController {
       }
 
       final result = await _ocrRepository.processImage(imagePath: imagePath);
-      if (result['text'] == null && result['id'] == null) {
+      final text = result['text'] as String?;
+      if (text == null || text.trim().isEmpty) {
         throw Exception('OCR returned an empty result');
       }
 
@@ -66,6 +78,8 @@ class ProcessingController extends BaseController {
         arguments: {
           'resultId': result['id'],
           'fromProcessing': true,
+          'imagePath': imagePath,
+          'ocrData': result,
         },
       );
     });
@@ -91,5 +105,26 @@ class ProcessingController extends BaseController {
 
   void goBack() {
     Get.back();
+  }
+
+  String? _resolveImagePath() {
+    final fromController = _uploadController.editedImagePath.value;
+    if (ImageRepository.isReadableImage(fromController)) {
+      return fromController;
+    }
+    final fromArgs = _routeArg('imagePath');
+    if (ImageRepository.isReadableImage(fromArgs)) {
+      return fromArgs;
+    }
+    return fromController ?? fromArgs;
+  }
+
+  String? _routeArg(String key) {
+    final args = Get.arguments;
+    if (args is Map) {
+      final value = args[key];
+      if (value is String && value.isNotEmpty) return value;
+    }
+    return null;
   }
 }

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
-import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_theme_context.dart';
 import '../../../core/widgets/maktub_header_waves.dart';
 import 'search_bar_widget.dart';
@@ -81,7 +80,7 @@ class HomeAppBar extends StatelessWidget {
                             ),
                             Expanded(
                               child: Text(
-                                AppConstants.appDisplayName,
+                                'app.name'.tr,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 textAlign: TextAlign.center,

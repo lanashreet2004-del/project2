@@ -8,7 +8,6 @@ import '../../core/widgets/wavy_app_bar.dart';
 import 'widgets/document_actions_grid.dart';
 import 'widgets/document_details_preview.dart';
 import 'widgets/document_extracted_text_card.dart';
-import 'widgets/document_info_card.dart';
 import 'widgets/document_statistics_section.dart';
 
 /// Document details screen — UI only.
@@ -21,6 +20,13 @@ class DocumentDetailsView extends GetView<DocumentDetailsController> {
       backgroundColor: context.colors.surfaceContainerLowest,
       appBar: WavyAppBar(
         title: Text('details.title'.tr),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.delete_outline,color: Colors.red),
+            tooltip: 'common.delete'.tr,
+            onPressed: () => _confirmDelete(context),
+          ),
+        ],
       ),
       body: Obx(() {
         final document = controller.document.value;
@@ -41,13 +47,6 @@ class DocumentDetailsView extends GetView<DocumentDetailsController> {
                 DocumentDetailsPreview(
                   imagePath: document.imagePath,
                   onTap: controller.openFullScreenPreview,
-                ),
-                const SizedBox(height: 16),
-                DocumentInfoCard(
-                  documentId: document.id,
-                  savedDate: _formatDateTime(document.createdAt),
-                  confidence: document.confidence,
-                  statusBadges: controller.statusBadges,
                 ),
                 const SizedBox(height: 16),
                 DocumentExtractedTextCard(text: document.extractedText),
@@ -80,13 +79,6 @@ class DocumentDetailsView extends GetView<DocumentDetailsController> {
                       isEnabled: !controller.isExportingPdf.value,
                       onTap: controller.exportWord,
                     ),
-                    DocumentActionItem(
-                      label: 'details.deleteDocument'.tr,
-                      icon: Icons.delete_outline,
-                      isDestructive: true,
-                      isEnabled: !exporting,
-                      onTap: () => _confirmDelete(context),
-                    ),
                   ],
                 ),
                 const SizedBox(height: 20),
@@ -101,15 +93,6 @@ class DocumentDetailsView extends GetView<DocumentDetailsController> {
         );
       }),
     );
-  }
-
-  String _formatDateTime(DateTime dateTime) {
-    final day = dateTime.day.toString().padLeft(2, '0');
-    final month = dateTime.month.toString().padLeft(2, '0');
-    final year = dateTime.year;
-    final hour = dateTime.hour.toString().padLeft(2, '0');
-    final minute = dateTime.minute.toString().padLeft(2, '0');
-    return '$day/$month/$year • $hour:$minute';
   }
 
   Future<void> _confirmDelete(BuildContext context) async {
