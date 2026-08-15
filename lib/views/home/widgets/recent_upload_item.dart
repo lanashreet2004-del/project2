@@ -1,10 +1,9 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 
 import '../../../controllers/home_controller.dart';
 import '../../../core/localization/display_helpers.dart';
 import '../../../core/theme/app_theme_context.dart';
+import '../../../core/widgets/document_image.dart';
 import '../../../models/history_model.dart';
 
 /// Single recent document list item for Home.
@@ -22,7 +21,6 @@ class RecentDocumentItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final title = displayDocumentTitle(HomeController.documentTitle(document));
     final subtitle = HomeController.relativeTime(document.createdAt);
-    final hasImage = HomeController.hasLocalImage(document);
 
     return Material(
       color: context.colors.surface,
@@ -40,25 +38,10 @@ class RecentDocumentItem extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(10),
-                child: Container(
+                child: SizedBox(
                   width: 56,
                   height: 56,
-                  color: context.appColors.iconSoft,
-                  child: hasImage
-                      ? Image.file(
-                          File(document.imagePath),
-                          width: 56,
-                          height: 56,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => Icon(
-                            Icons.description_outlined,
-                            color: context.colors.primary,
-                          ),
-                        )
-                      : Icon(
-                          Icons.description_outlined,
-                          color: context.colors.primary,
-                        ),
+                  child: DocumentImage(imagePath: document.imagePath),
                 ),
               ),
               const SizedBox(width: 14),

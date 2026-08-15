@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import '../core/navigation/main_navigation.dart';
 import '../core/services/storage_service.dart';
 import '../core/theme/theme_preferences.dart';
+import '../core/utils/ocr_auth_guard.dart';
 import '../models/history_model.dart';
 import '../models/image_pick_source.dart';
 import '../repositories/auth_repository.dart';
@@ -80,7 +81,6 @@ class HomeController extends BaseController {
   void onReady() {
     super.onReady();
     _recoverLostPickerImage();
-    loadDocuments();
   }
 
   void _setGreeting() {
@@ -110,17 +110,28 @@ class HomeController extends BaseController {
 
   Future<void> loadDocuments() async {
     _loadUserIdentity();
-    final data = await runAsync(() => _historyRepository.getDocuments());
-    if (data == null) return;
+
+    if (!_authRepository.isLoggedIn) {
+      allDocuments.clear();
+      recentDocuments.clear();
+      clearError();
+      return;
+    }
+
+    final data = await runAsync(() => _historyRepository.fetchOcrHistory());
+    if (data == null) {
+      // API failure: do not keep or invent documents.
+      allDocuments.clear();
+      recentDocuments.clear();
+      return;
+    }
 
     allDocuments.assignAll(data);
     _applyRecentDocuments();
   }
 
   void _applyRecentDocuments() {
-    final limit =
-        allDocuments.length < _recentLimit ? allDocuments.length : _recentLimit;
-    recentDocuments.assignAll(allDocuments.take(limit).toList());
+    recentDocuments.assignAll(allDocuments.take(_recentLimit).toList());
   }
 
   Future<void> refreshHome() => loadDocuments();
@@ -136,6 +147,12 @@ class HomeController extends BaseController {
   }
 
   Future<void> pickFromGallery() async {
+    if (!await OcrAuthGuard.ensureAuthenticated(_authRepository)) {
+      _loadUserIdentity();
+      return;
+    }
+    _loadUserIdentity();
+
     final path = await runAsync(() => _imageRepository.pickFromGallery());
     if (ImageRepository.isReadableImage(path)) {
       _openImageEditor(path!, ImagePickSource.gallery);
@@ -145,6 +162,12 @@ class HomeController extends BaseController {
   }
 
   Future<void> pickFromCamera() async {
+    if (!await OcrAuthGuard.ensureAuthenticated(_authRepository)) {
+      _loadUserIdentity();
+      return;
+    }
+    _loadUserIdentity();
+
     final path = await runAsync(() => _imageRepository.pickFromCamera());
     if (ImageRepository.isReadableImage(path)) {
       _openImageEditor(path!, ImagePickSource.camera);
@@ -155,6 +178,7 @@ class HomeController extends BaseController {
 
   Future<void> _recoverLostPickerImage() async {
     try {
+      if (!_authRepository.isLoggedIn) return;
       final path = await _imageRepository.retrieveLostPickerImage();
       if (!ImageRepository.isReadableImage(path)) return;
       _openImageEditor(path!, ImagePickSource.camera);
@@ -225,6 +249,7 @@ class HomeController extends BaseController {
     if (Get.isRegistered<SettingsController>()) {
       Get.find<SettingsController>().refreshAccountState();
     }
+    await loadDocuments();
   }
 
   Future<void> signOutFromDrawer() async {
@@ -253,6 +278,7 @@ class HomeController extends BaseController {
     _closeDrawer();
     await _authRepository.signOut();
     _loadUserIdentity();
+    await loadDocuments();
     if (Get.isRegistered<SettingsController>()) {
       Get.find<SettingsController>().refreshAccountState();
     }

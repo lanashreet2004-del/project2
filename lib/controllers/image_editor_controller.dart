@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../core/utils/ocr_auth_guard.dart';
 import '../models/image_pick_source.dart';
+import '../repositories/auth_repository.dart';
 import '../repositories/image_edit_repository.dart';
 import '../repositories/image_repository.dart';
 import '../routes/app_routes.dart';
@@ -120,6 +122,9 @@ class ImageEditorController extends BaseController {
   }
 
   Future<void> retakePhoto() async {
+    final auth = Get.find<AuthRepository>();
+    if (!await OcrAuthGuard.ensureAuthenticated(auth)) return;
+
     final source = pickSource.value;
     final path = await runAsync(() {
       return source == ImagePickSource.camera

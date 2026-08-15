@@ -21,8 +21,10 @@ class OcrResultModel extends BaseModel {
     required String imagePath,
   }) {
     return OcrResultModel(
-      id: json['id'] as String? ?? 'ocr_unknown',
-      extractedText: json['text'] as String? ?? '',
+      id: json['id']?.toString() ?? 'ocr_unknown',
+      extractedText: (json['text'] as String?) ??
+          (json['extracted_text'] as String?) ??
+          '',
       processedAt: json['processed_at'] != null
           ? DateTime.parse(json['processed_at'] as String)
           : DateTime.now(),

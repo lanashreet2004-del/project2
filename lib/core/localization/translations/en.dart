@@ -195,7 +195,7 @@ const Map<String, String> enTranslations = {
   // Processing
   'processing.title': 'Processing',
   'processing.wait':
-      'Please wait while we process your document.\nDemo OCR is used until the backend is ready.',
+      'Please wait while we process your document.',
   'processing.errorBody':
       'Something went wrong while processing your document.',
   'processing.failed': 'Processing failed',
@@ -204,6 +204,11 @@ const Map<String, String> enTranslations = {
   'processing.extracting': 'Extracting text...',
   'processing.done': 'Done',
   'processing.noImage': 'No image to process',
+
+  // OCR auth gate
+  'ocr.authRequiredTitle': 'Sign in required',
+  'ocr.authRequiredBody':
+      'Please log in or create an account to use OCR.',
 
   // Result
   'result.title': 'Result',
@@ -246,6 +251,8 @@ const Map<String, String> enTranslations = {
   'documents.scanNew': 'Scan New Document',
   'documents.deleted': 'Document deleted',
   'documents.cleared': 'All documents cleared',
+  'documents.clearPartialFailed':
+      'Some documents could not be deleted. The list was refreshed.',
 
   // Document details
   'details.title': 'Document Details',

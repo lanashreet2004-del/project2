@@ -1,49 +1,49 @@
-import 'dart:io';
-
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get_storage/get_storage.dart';
-import 'package:p2/core/services/api_service.dart';
-import 'package:p2/core/services/storage_service.dart';
-import 'package:p2/repositories/ocr_repository.dart';
-import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
-
-import '../helpers/offline_test_support.dart';
+import 'package:p2/models/ocr_process_response.dart';
+import 'package:p2/models/ocr_status_model.dart';
 
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
+  test('OcrProcessResponse parses 202 body', () {
+    final response = OcrProcessResponse.fromJson({
+      'id': 123,
+      'status': 'PENDING',
+      'message': 'OCR task accepted. Poll the status endpoint for updates.',
+    });
 
-  late Directory docsDir;
-  late OcrRepository repository;
-
-  setUpAll(() async {
-    docsDir = await createTestDocumentsDir();
-    PathProviderPlatform.instance = FakePathProvider(docsDir.path);
-    await GetStorage.init('ocr_repository_test');
+    expect(response.id, 123);
+    expect(response.status, 'PENDING');
   });
 
-  setUp(() {
-    repository = OcrRepository(
-      apiService: ApiService(),
-      storageService: StorageService(box: GetStorage('ocr_repository_test')),
-    );
+  test('OcrStatusModel maps COMPLETED text for result UI', () {
+    final status = OcrStatusModel.fromJson({
+      'id': 15,
+      'status': 'COMPLETED',
+      'extracted_text': 'Hello OCR',
+      'error_message': null,
+      'document': {
+        'paragraphs': ['Hello OCR'],
+      },
+      'result': {
+        'status': 'COMPLETED',
+        'completed_at': '2026-08-15T14:31:20+00:00',
+      },
+    });
+
+    expect(status.isCompleted, isTrue);
+    expect(status.toOcrResultMap()['text'], 'Hello OCR');
+    expect(status.toOcrResultMap()['id'], '15');
   });
 
-  tearDownAll(() async {
-    await tryDeleteTestRoot(docsDir);
-  });
+  test('OcrStatusModel FAILED exposes error_message', () {
+    final status = OcrStatusModel.fromJson({
+      'id': 9,
+      'status': 'FAILED',
+      'extracted_text': null,
+      'error_message': 'Could not read image',
+      'document': {'paragraphs': []},
+    });
 
-  test('mock OCR returns extracted text without confidence', () async {
-    final source = await writeTestImage(docsDir, name: 'ocr_input.jpg');
-    expect(await source.exists(), isTrue);
-
-    final result = await repository.processImage(imagePath: source.path);
-
-    expect(result['text'], isA<String>());
-    expect((result['text'] as String).trim(), isNotEmpty);
-    expect(result['id'], isNotEmpty);
-    expect(result['language'], 'ar');
-    expect(result['processed_at'], isNotEmpty);
-    expectNoConfidenceFields(result);
-    expect(source.path, isNotEmpty);
+    expect(status.isFailed, isTrue);
+    expect(status.errorMessage, 'Could not read image');
   });
 }

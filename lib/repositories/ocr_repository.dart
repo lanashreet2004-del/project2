@@ -1,45 +1,67 @@
+import 'package:dio/dio.dart';
+
+import '../core/constants/api_constants.dart';
+import '../core/utils/api_exception.dart';
+import '../models/ocr_process_response.dart';
+import '../models/ocr_status_model.dart';
 import 'base_repository.dart';
 
-/// Repository for AI model integration (Arabic text extraction).
-/// Separates OCR/AI logic from controllers for easy model swapping.
+/// OCR against Django process-ocr + ocr-status endpoints.
 class OcrRepository extends BaseRepository {
   OcrRepository({
     required super.apiService,
     required super.storageService,
   });
 
-  Future<Map<String, dynamic>> extractText({
+  /// POST multipart `/api/process-ocr/` with field name exactly `image`.
+  Future<OcrProcessResponse> processImage({
     required String imagePath,
   }) async {
-    // Placeholder — integrate local TFLite model or remote AI endpoint.
-    // Mock returns extracted text only; the image path is required by the flow.
-    return {
-      'id': 'ocr_${DateTime.now().millisecondsSinceEpoch}',
-      'text':
-          'مرحباً بكم في تطبيق مكتوب.\n\n'
-          'هذا نص تجريبي مستخرج من الصورة باستخدام تقنية التعرف الضوئي على الحروف.\n'
-          'يمكنك تعديل هذا النص بالضغط على زر "تعديل النص".',
-      'language': 'ar',
-      'processed_at': DateTime.now().toIso8601String(),
-    };
+    try {
+      final formData = FormData.fromMap({
+        'image': await MultipartFile.fromFile(
+          imagePath,
+          filename: _fileName(imagePath),
+        ),
+      });
+
+      final response = await apiService.uploadFile<dynamic>(
+        ApiConstants.processOcr,
+        formData: formData,
+        options: Options(
+          contentType: Headers.multipartFormDataContentType,
+        ),
+      );
+
+      final data = _asMap(response.data);
+      return OcrProcessResponse.fromJson(data);
+    } on DioException catch (e) {
+      throw ApiException.fromDio(e);
+    }
   }
 
-  /// Full OCR pipeline — ready for Dio API or on-device model.
-  Future<Map<String, dynamic>> processImage({
-    required String imagePath,
-  }) async {
-    // Future: upload via Dio then poll for result, or run local model
-    // final response = await apiService.post(ApiConstants.upload, ...);
-    return extractText(imagePath: imagePath);
+  /// GET `/api/ocr-status/{id}/`.
+  Future<OcrStatusModel> getStatus({required int id}) async {
+    try {
+      final response = await apiService.get<dynamic>(
+        ApiConstants.ocrStatus(id),
+      );
+      final data = _asMap(response.data);
+      return OcrStatusModel.fromJson(data);
+    } on DioException catch (e) {
+      throw ApiException.fromDio(e);
+    }
   }
 
-  Future<String> exportToJson({required Map<String, dynamic> data}) async {
-    // Placeholder — JSON export logic
-    return '{}';
+  Map<String, dynamic> _asMap(dynamic data) {
+    if (data is Map<String, dynamic>) return data;
+    if (data is Map) return Map<String, dynamic>.from(data);
+    throw ApiException('Unexpected OCR response.');
   }
 
-  Future<String> exportToPdf({required Map<String, dynamic> data}) async {
-    // Placeholder — PDF export logic
-    return '';
+  static String _fileName(String path) {
+    final normalized = path.replaceAll('\\', '/');
+    final index = normalized.lastIndexOf('/');
+    return index == -1 ? path : normalized.substring(index + 1);
   }
 }

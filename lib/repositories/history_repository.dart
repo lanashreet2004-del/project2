@@ -1,14 +1,33 @@
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../core/constants/api_constants.dart';
 import '../core/constants/storage_keys.dart';
+import '../core/utils/api_exception.dart';
+import '../core/utils/document_image_path.dart';
 import '../models/history_model.dart';
+import '../models/ocr_history_item.dart';
 import 'base_repository.dart';
 
-/// Handles document history persistence via local storage.
-/// Ready for migration to Dio API or a local database.
+/// Result of sequential Clear All against the OCR history API.
+class OcrClearAllResult {
+  const OcrClearAllResult({
+    required this.attempted,
+    required this.failed,
+    required this.remaining,
+  });
+
+  final int attempted;
+  final int failed;
+  final List<HistoryModel> remaining;
+
+  bool get allSucceeded => failed == 0;
+}
+
+/// Local document history + remote OCR history API.
 class HistoryRepository extends BaseRepository {
   HistoryRepository({
     required super.apiService,
@@ -17,6 +36,75 @@ class HistoryRepository extends BaseRepository {
 
   static const _imagesFolder = 'DocumentImages';
 
+  /// GET `/api/ocr-history/` — remote OCR records for My Documents.
+  Future<List<HistoryModel>> fetchOcrHistory() async {
+    try {
+      final response = await apiService.get<dynamic>(ApiConstants.ocrHistory);
+      final raw = response.data;
+      if (raw is! List) {
+        throw ApiException('Unexpected OCR history response.');
+      }
+
+      final items = <HistoryModel>[];
+      for (final entry in raw) {
+        if (entry is! Map) continue;
+        final item = OcrHistoryItem.fromJson(Map<String, dynamic>.from(entry));
+        items.add(item.toHistoryModel());
+      }
+
+      items.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      return items;
+    } on DioException catch (e) {
+      throw ApiException.fromDio(e);
+    }
+  }
+
+  /// DELETE `/api/ocr-status/{id}/` — removes a backend OCR record.
+  Future<void> deleteOcrRecord(int id) async {
+    try {
+      await apiService.delete<dynamic>(ApiConstants.ocrStatus(id));
+    } on DioException catch (e) {
+      throw ApiException.fromDio(e);
+    }
+  }
+
+  /// Parses a HistoryModel id that originated from a backend integer id.
+  static int? parseBackendId(String id) => int.tryParse(id.trim());
+
+  /// Deletes every backend OCR record sequentially via DELETE /api/ocr-status/{id}/.
+  /// Reloads history afterward so callers can sync UI to the server.
+  Future<OcrClearAllResult> deleteAllOcrRecords() async {
+    final records = await fetchOcrHistory();
+    if (records.isEmpty) {
+      return const OcrClearAllResult(
+        attempted: 0,
+        failed: 0,
+        remaining: [],
+      );
+    }
+
+    var failed = 0;
+    for (final record in records) {
+      final id = parseBackendId(record.id);
+      if (id == null) {
+        failed++;
+        continue;
+      }
+      try {
+        await deleteOcrRecord(id);
+      } catch (_) {
+        failed++;
+      }
+    }
+
+    final remaining = await fetchOcrHistory();
+    return OcrClearAllResult(
+      attempted: records.length,
+      failed: failed,
+      remaining: remaining,
+    );
+  }
+
   /// Saves metadata after copying the image into durable app storage.
   ///
   /// Image copy happens only here (explicit save), never during list loads
@@ -24,6 +112,9 @@ class HistoryRepository extends BaseRepository {
   Future<HistoryModel> saveDocument(HistoryModel item) async {
     if (item.extractedText.trim().isEmpty) {
       throw Exception('Cannot save document without extracted text');
+    }
+    if (DocumentImagePath.isNetworkUrl(item.imagePath)) {
+      throw Exception('Cannot save remote OCR image as a local document');
     }
 
     final persisted = await _persistImage(item);
@@ -44,6 +135,10 @@ class HistoryRepository extends BaseRepository {
   /// Copies a still-valid temp/cache image into durable storage in place.
   /// Does not reorder history. Safe to call when opening an existing document.
   Future<HistoryModel> ensurePersistedImage(HistoryModel item) async {
+    if (DocumentImagePath.isNetworkUrl(item.imagePath)) {
+      return item;
+    }
+
     try {
       final persisted = await _persistImage(item);
       if (persisted.imagePath == item.imagePath) return item;
@@ -98,6 +193,7 @@ class HistoryRepository extends BaseRepository {
     try {
       final sourcePath = item.imagePath.trim();
       if (sourcePath.isEmpty) return item;
+      if (DocumentImagePath.isNetworkUrl(sourcePath)) return item;
 
       final imagesDir = await _imagesDirectory();
       if (imagesDir == null) return item;
@@ -125,7 +221,7 @@ class HistoryRepository extends BaseRepository {
   Future<void> _deletePersistedImage(HistoryModel? item) async {
     try {
       final path = item?.imagePath.trim() ?? '';
-      if (path.isEmpty) return;
+      if (path.isEmpty || DocumentImagePath.isNetworkUrl(path)) return;
 
       final imagesDir = await _imagesDirectory();
       if (imagesDir == null) return;

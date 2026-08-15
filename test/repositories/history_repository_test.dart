@@ -6,7 +6,6 @@ import 'package:p2/core/services/api_service.dart';
 import 'package:p2/core/services/storage_service.dart';
 import 'package:p2/models/history_model.dart';
 import 'package:p2/repositories/history_repository.dart';
-import 'package:p2/repositories/ocr_repository.dart';
 import 'package:p2/repositories/result_repository.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 
@@ -170,18 +169,19 @@ void main() {
       expect(File(loaded.single.imagePath).existsSync(), isTrue);
     });
 
-    test('mock OCR result can be saved and loaded as a document', () async {
+    test('OCR result map can be saved and loaded as a document', () async {
       final source = await writeTestImage(sourceDir, name: 'ocr_save.jpg');
-      final ocrRepository = OcrRepository(
-        apiService: ApiService(),
-        storageService: storage,
-      );
       final resultRepository = ResultRepository(
         apiService: ApiService(),
         storageService: storage,
       );
 
-      final ocrData = await ocrRepository.processImage(imagePath: source.path);
+      final ocrData = <String, dynamic>{
+        'id': '15',
+        'text': 'Saved OCR text',
+        'processed_at': DateTime.now().toIso8601String(),
+        'language': 'ar',
+      };
       final ocrResult = await resultRepository.getResult(
         id: ocrData['id'] as String,
         ocrData: ocrData,

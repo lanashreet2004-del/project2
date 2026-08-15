@@ -297,7 +297,14 @@ class DocumentDetailsController extends BaseController {
     final id = document.value?.id;
     if (id == null) return;
 
-    await runAsync(() => _repository.deleteDocument(id));
+    final backendId = HistoryRepository.parseBackendId(id);
+    if (backendId == null) {
+      setError('Invalid document id');
+      return;
+    }
+
+    await runAsync(() => _repository.deleteOcrRecord(backendId));
+    if (hasError) return;
     Get.back();
   }
 

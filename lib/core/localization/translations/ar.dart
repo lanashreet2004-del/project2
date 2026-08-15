@@ -196,8 +196,7 @@ const Map<String, String> arTranslations = {
 
   // Processing
   'processing.title': 'جارٍ المعالجة',
-  'processing.wait':
-      'يرجى الانتظار بينما نعالج مستندك.\nيُستخدم OCR تجريبي حتى يصبح الخادم جاهزاً.',
+  'processing.wait': 'يرجى الانتظار بينما نعالج مستندك.',
   'processing.errorBody': 'حدث خطأ أثناء معالجة مستندك.',
   'processing.failed': 'فشلت المعالجة',
   'processing.preparing': 'جارٍ تجهيز الصورة...',
@@ -205,6 +204,11 @@ const Map<String, String> arTranslations = {
   'processing.extracting': 'جارٍ استخراج النص...',
   'processing.done': 'تم',
   'processing.noImage': 'لا توجد صورة للمعالجة',
+
+  // OCR auth gate
+  'ocr.authRequiredTitle': 'يلزم تسجيل الدخول',
+  'ocr.authRequiredBody':
+      'يرجى تسجيل الدخول أو إنشاء حساب لاستخدام OCR.',
 
   // Result
   'result.title': 'النتيجة',
@@ -247,6 +251,8 @@ const Map<String, String> arTranslations = {
   'documents.scanNew': 'مسح مستند جديد',
   'documents.deleted': 'تم حذف المستند',
   'documents.cleared': 'تم مسح جميع المستندات',
+  'documents.clearPartialFailed':
+      'تعذر حذف بعض المستندات. تم تحديث القائمة.',
 
   // Document details
   'details.title': 'تفاصيل المستند',

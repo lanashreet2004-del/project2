@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 
 import '../../controllers/processing_controller.dart';
 import '../../controllers/upload_controller.dart';
+import '../../repositories/auth_repository.dart';
 import '../../repositories/ocr_repository.dart';
 
 class ProcessingBinding extends Bindings {
@@ -11,6 +12,7 @@ class ProcessingBinding extends Bindings {
       () => ProcessingController(
         ocrRepository: Get.find<OcrRepository>(),
         uploadController: Get.find<UploadController>(),
+        authRepository: Get.find<AuthRepository>(),
       ),
     );
   }

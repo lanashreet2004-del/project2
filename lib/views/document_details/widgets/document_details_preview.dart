@@ -1,9 +1,8 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../core/theme/app_theme_context.dart';
+import '../../../core/widgets/document_image.dart';
 
 class DocumentDetailsPreview extends StatelessWidget {
   const DocumentDetailsPreview({
@@ -31,7 +30,10 @@ class DocumentDetailsPreview extends StatelessWidget {
             child: Stack(
               fit: StackFit.expand,
               children: [
-                _buildImage(context),
+                DocumentImage(
+                  imagePath: imagePath,
+                  placeholderIconSize: 56,
+                ),
                 Positioned(
                   right: 12,
                   bottom: 12,
@@ -62,34 +64,6 @@ class DocumentDetailsPreview extends StatelessWidget {
               ],
             ),
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildImage(BuildContext context) {
-    if (imagePath.isEmpty || !File(imagePath).existsSync()) {
-      return ColoredBox(
-        color: context.appColors.iconSoft,
-        child: Center(
-          child: Icon(
-            Icons.image_outlined,
-            size: 56,
-            color: context.colors.onSurfaceVariant.withValues(alpha: 0.6),
-          ),
-        ),
-      );
-    }
-
-    return Image.file(
-      File(imagePath),
-      fit: BoxFit.cover,
-      errorBuilder: (_, __, ___) => ColoredBox(
-        color: context.appColors.iconSoft,
-        child: Icon(
-          Icons.broken_image_outlined,
-          size: 56,
-          color: context.colors.onSurfaceVariant.withValues(alpha: 0.6),
         ),
       ),
     );
