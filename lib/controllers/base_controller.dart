@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
 
+import '../core/utils/api_exception.dart';
+
 /// Base GetX controller for MVC presentation layer.
 abstract class BaseController extends GetxController {
   final RxBool isLoading = false.obs;
@@ -20,7 +22,11 @@ abstract class BaseController extends GetxController {
     try {
       return await action();
     } catch (e) {
-      setError(e.toString());
+      if (e is ApiException) {
+        setError(e.message);
+      } else {
+        setError(e.toString());
+      }
       return null;
     } finally {
       setLoading(false);

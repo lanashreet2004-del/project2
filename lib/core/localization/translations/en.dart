@@ -76,17 +76,19 @@ const Map<String, String> enTranslations = {
   'settings.aboutApp': 'About Satr',
   'settings.accountManage': 'Tap to manage your account',
   'settings.demoNotice':
-      'Account features use a local demo session until the backend is ready.',
+      'Manage your account and sign out securely.',
   'settings.signOutTitle': 'Sign out?',
-  'settings.signOutBody': 'This clears the local demo session only.',
+  'settings.signOutBody': 'You will be signed out of your account.',
   'settings.signedOutTitle': 'Signed out',
-  'settings.signedOutBody': 'Local session cleared.',
+  'settings.signedOutBody': 'You have been signed out.',
 
   // Auth
   'auth.title': 'Sign In',
   'auth.welcomeBack': 'Welcome Back',
   'auth.signInSubtitle': 'Sign in to continue to Satr',
-  'auth.demoNotice': 'Frontend demo login — no backend API is called.',
+  'auth.demoNotice': 'Sign in with your Satr account.',
+  'auth.username': 'Username',
+  'auth.usernameHint': 'Your username',
   'auth.email': 'Email',
   'auth.emailHint': 'example@email.com',
   'auth.password': 'Password',
@@ -107,9 +109,9 @@ const Map<String, String> enTranslations = {
   'auth.showPassword': 'Show password',
   'auth.hidePassword': 'Hide password',
   'auth.successTitle': 'Signed in',
-  'auth.successBody': 'Local demo session started.',
+  'auth.successBody': 'Welcome back.',
   'auth.signUpSuccessTitle': 'Account created',
-  'auth.signUpSuccessBody': 'Local demo session started.',
+  'auth.signUpSuccessBody': 'Your account is ready.',
   'auth.errorTitle': 'Sign in failed',
   'auth.errorGeneric':
       'Unable to sign in. Please check your credentials and try again.',
@@ -126,15 +128,15 @@ const Map<String, String> enTranslations = {
   'profile.title': 'Account',
   'profile.notSignedIn': 'Not signed in',
   'profile.status': 'Account status',
-  'profile.localSession': 'Local demo session',
+  'profile.localSession': 'Signed in',
   'profile.signedInNotice':
-      'Signed in with a local demo session. Backend authentication is not connected yet.',
+      'You are signed in to your Satr account.',
   'profile.guestNotice':
-      'Sign in to preview the account experience. This is frontend-only until the backend is ready.',
+      'Sign in to access your account.',
   'profile.signOutTitle': 'Sign out?',
-  'profile.signOutBody': 'This clears the local demo session only.',
+  'profile.signOutBody': 'You will be signed out of your account.',
   'profile.signedOutTitle': 'Signed out',
-  'profile.signedOutBody': 'Local session cleared.',
+  'profile.signedOutBody': 'You have been signed out.',
 
   // Onboarding
   'onboarding.skip': 'Skip',

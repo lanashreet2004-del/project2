@@ -26,31 +26,39 @@ class InitialBinding extends Bindings {
   void dependencies() {
     Get.put<ApiService>(ApiService(), permanent: true);
     Get.put<StorageService>(StorageService(), permanent: true);
+
+    final apiService = Get.find<ApiService>();
+    final storageService = Get.find<StorageService>();
+
+    Get.put<AuthRepository>(
+      AuthRepository(
+        apiService: apiService,
+        storageService: storageService,
+      ),
+      permanent: true,
+    );
+
+    final authRepository = Get.find<AuthRepository>();
+    authRepository.restoreSession();
+    apiService.onUnauthorized = authRepository.handleUnauthorized;
+
     Get.put<LocaleController>(
-      LocaleController(storageService: Get.find<StorageService>()),
+      LocaleController(storageService: storageService),
       permanent: true,
     );
 
     Get.lazyPut<TextEditRepository>(
       () => TextEditRepository(
-        apiService: Get.find<ApiService>(),
-        storageService: Get.find<StorageService>(),
+        apiService: apiService,
+        storageService: storageService,
       ),
       fenix: true,
     );
 
     Get.lazyPut<OnboardingRepository>(
       () => OnboardingRepository(
-        apiService: Get.find<ApiService>(),
-        storageService: Get.find<StorageService>(),
-      ),
-      fenix: true,
-    );
-
-    Get.lazyPut<AuthRepository>(
-      () => AuthRepository(
-        apiService: Get.find<ApiService>(),
-        storageService: Get.find<StorageService>(),
+        apiService: apiService,
+        storageService: storageService,
       ),
       fenix: true,
     );

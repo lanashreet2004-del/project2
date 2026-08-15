@@ -6,16 +6,16 @@ import '../repositories/auth_repository.dart';
 import '../routes/app_routes.dart';
 import 'base_controller.dart';
 
-/// Controller for authentication presentation logic (frontend-only session).
+/// Controller for authentication presentation logic.
 class AuthController extends BaseController {
   AuthController({required AuthRepository repository})
       : _repository = repository;
 
   final AuthRepository _repository;
 
+  final usernameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  final nameController = TextEditingController();
   final confirmPasswordController = TextEditingController();
 
   final formKey = GlobalKey<FormState>();
@@ -28,31 +28,32 @@ class AuthController extends BaseController {
 
   bool get isAuthenticated => user.value != null || _repository.isLoggedIn;
 
+  @override
+  void onInit() {
+    super.onInit();
+    user.value = _repository.getCurrentUser();
+  }
+
   Future<void> signIn() async {
     if (isLoading.value) return;
     if (!(formKey.currentState?.validate() ?? false)) return;
 
     final result = await runAsync(
       () => _repository.signIn(
-        email: emailController.text.trim(),
+        username: usernameController.text.trim(),
         password: passwordController.text,
       ),
     );
 
-    if (result != null) {
-      user.value = result;
-      Get.snackbar(
-        'auth.successTitle'.tr,
-        'auth.successBody'.tr,
-        snackPosition: SnackPosition.BOTTOM,
-      );
-      _leaveAuthFlow();
-      return;
-    }
+    if (result == null) return;
 
-    if (hasError) {
-      setError('auth.errorGeneric'.tr);
-    }
+    user.value = result;
+    Get.snackbar(
+      'auth.successTitle'.tr,
+      'auth.successBody'.tr,
+      snackPosition: SnackPosition.BOTTOM,
+    );
+    _leaveAuthFlow();
   }
 
   Future<void> signUp() async {
@@ -61,26 +62,22 @@ class AuthController extends BaseController {
 
     final result = await runAsync(
       () => _repository.signUp(
-        name: nameController.text.trim(),
+        username: usernameController.text.trim(),
         email: emailController.text.trim(),
         password: passwordController.text,
+        passwordConfirm: confirmPasswordController.text,
       ),
     );
 
-    if (result != null) {
-      user.value = result;
-      Get.snackbar(
-        'auth.signUpSuccessTitle'.tr,
-        'auth.signUpSuccessBody'.tr,
-        snackPosition: SnackPosition.BOTTOM,
-      );
-      _leaveAuthFlow();
-      return;
-    }
+    if (result == null) return;
 
-    if (hasError) {
-      setError('auth.signUpErrorGeneric'.tr);
-    }
+    user.value = result;
+    Get.snackbar(
+      'auth.signUpSuccessTitle'.tr,
+      'auth.signUpSuccessBody'.tr,
+      snackPosition: SnackPosition.BOTTOM,
+    );
+    _leaveAuthFlow();
   }
 
   void togglePasswordVisibility() {
@@ -114,27 +111,21 @@ class AuthController extends BaseController {
   }
 
   Future<void> signOut() async {
-    await _repository.signOut();
+    await runAsync(_repository.signOut);
     user.value = null;
   }
 
   void _leaveAuthFlow() {
-    if (Get.currentRoute == AppRoutes.signUp) {
-      Get.back();
-    }
-
-    if (Get.key.currentState?.canPop() ?? false) {
-      Get.back(result: true);
-    } else {
-      Get.offAllNamed(AppRoutes.home);
-    }
+    // Always replace the stack so snackbar overlays cannot steal Get.back(),
+    // and Android Back from Home cannot return to Login/Sign Up.
+    Get.offAllNamed(AppRoutes.home);
   }
 
   @override
   void onClose() {
+    usernameController.dispose();
     emailController.dispose();
     passwordController.dispose();
-    nameController.dispose();
     confirmPasswordController.dispose();
     super.onClose();
   }

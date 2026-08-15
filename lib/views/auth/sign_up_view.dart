@@ -8,7 +8,7 @@ import '../../core/widgets/responsive_layout.dart';
 import '../../core/widgets/wavy_app_bar.dart';
 import 'widgets/auth_form_widgets.dart';
 
-/// Sign-up screen — frontend-only demo session, backend-ready structure.
+/// Sign-up screen — Django SimpleJWT registration.
 class SignUpView extends GetView<AuthController> {
   const SignUpView({super.key});
 
@@ -47,16 +47,15 @@ class SignUpView extends GetView<AuthController> {
                               ),
                               const SizedBox(height: 32),
                               TextFormField(
-                                controller: controller.nameController,
+                                controller: controller.usernameController,
                                 decoration: InputDecoration(
-                                  labelText: 'auth.fullName'.tr,
-                                  hintText: 'auth.fullNameHint'.tr,
+                                  labelText: 'auth.username'.tr,
+                                  hintText: 'auth.usernameHint'.tr,
                                   prefixIcon: const Icon(Icons.person_outline),
                                 ),
-                                textCapitalization: TextCapitalization.words,
                                 textInputAction: TextInputAction.next,
-                                autofillHints: const [AutofillHints.name],
-                                validator: Validators.fullName,
+                                autofillHints: const [AutofillHints.username],
+                                validator: Validators.username,
                                 enabled: !loading,
                               ),
                               const SizedBox(height: 16),

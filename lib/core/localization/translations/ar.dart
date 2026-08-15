@@ -77,18 +77,19 @@ const Map<String, String> arTranslations = {
   'settings.aboutApp': 'حول سطر',
   'settings.accountManage': 'اضغط لإدارة حسابك',
   'settings.demoNotice':
-      'ميزات الحساب تستخدم جلسة تجريبية محلية حتى يصبح الخادم جاهزاً.',
+      'أدر حسابك وسجّل الخروج بأمان.',
   'settings.signOutTitle': 'تسجيل الخروج؟',
-  'settings.signOutBody': 'سيؤدي ذلك إلى مسح الجلسة التجريبية المحلية فقط.',
+  'settings.signOutBody': 'سيتم تسجيل خروجك من حسابك.',
   'settings.signedOutTitle': 'تم تسجيل الخروج',
-  'settings.signedOutBody': 'تم مسح الجلسة المحلية.',
+  'settings.signedOutBody': 'تم تسجيل خروجك.',
 
   // Auth
   'auth.title': 'تسجيل الدخول',
   'auth.welcomeBack': 'مرحباً بعودتك',
   'auth.signInSubtitle': 'سجّل الدخول للمتابعة إلى سطر',
-  'auth.demoNotice':
-      'تسجيل دخول تجريبي للواجهة — لا يتم استدعاء واجهة برمجة التطبيقات.',
+  'auth.demoNotice': 'سجّل الدخول باستخدام حساب سطر.',
+  'auth.username': 'اسم المستخدم',
+  'auth.usernameHint': 'اسم المستخدم الخاص بك',
   'auth.email': 'البريد الإلكتروني',
   'auth.emailHint': 'example@email.com',
   'auth.password': 'كلمة المرور',
@@ -109,9 +110,9 @@ const Map<String, String> arTranslations = {
   'auth.showPassword': 'إظهار كلمة المرور',
   'auth.hidePassword': 'إخفاء كلمة المرور',
   'auth.successTitle': 'تم تسجيل الدخول',
-  'auth.successBody': 'تم بدء الجلسة التجريبية المحلية.',
+  'auth.successBody': 'مرحباً بعودتك.',
   'auth.signUpSuccessTitle': 'تم إنشاء الحساب',
-  'auth.signUpSuccessBody': 'تم بدء الجلسة التجريبية المحلية.',
+  'auth.signUpSuccessBody': 'حسابك جاهز الآن.',
   'auth.errorTitle': 'فشل تسجيل الدخول',
   'auth.errorGeneric':
       'تعذّر تسجيل الدخول. يرجى التحقق من بياناتك والمحاولة مرة أخرى.',
@@ -129,15 +130,15 @@ const Map<String, String> arTranslations = {
   'profile.title': 'الحساب',
   'profile.notSignedIn': 'لم يتم تسجيل الدخول',
   'profile.status': 'حالة الحساب',
-  'profile.localSession': 'جلسة تجريبية محلية',
+  'profile.localSession': 'تم تسجيل الدخول',
   'profile.signedInNotice':
-      'تم تسجيل الدخول بجلسة تجريبية محلية. مصادقة الخادم غير متصلة بعد.',
+      'أنت مسجّل الدخول إلى حساب سطر.',
   'profile.guestNotice':
-      'سجّل الدخول لمعاينة تجربة الحساب. هذه الواجهة فقط حتى يصبح الخادم جاهزاً.',
+      'سجّل الدخول للوصول إلى حسابك.',
   'profile.signOutTitle': 'تسجيل الخروج؟',
-  'profile.signOutBody': 'سيؤدي ذلك إلى مسح الجلسة التجريبية المحلية فقط.',
+  'profile.signOutBody': 'سيتم تسجيل خروجك من حسابك.',
   'profile.signedOutTitle': 'تم تسجيل الخروج',
-  'profile.signedOutBody': 'تم مسح الجلسة المحلية.',
+  'profile.signedOutBody': 'تم تسجيل خروجك.',
 
   // Onboarding
   'onboarding.skip': 'تخطي',

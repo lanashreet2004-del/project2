@@ -11,6 +11,12 @@ class Validators {
     return null;
   }
 
+  static String? username(String? value, {int min = 3}) {
+    final requiredError = required(value, fieldName: 'auth.username'.tr);
+    if (requiredError != null) return requiredError;
+    return minLength(value?.trim(), min, fieldName: 'auth.username'.tr);
+  }
+
   static String? email(String? value) {
     if (value == null || value.trim().isEmpty) {
       return 'auth.validation.emailRequired'.tr;

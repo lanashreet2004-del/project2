@@ -8,7 +8,7 @@ import '../../core/widgets/responsive_layout.dart';
 import '../../core/widgets/wavy_app_bar.dart';
 import 'widgets/auth_form_widgets.dart';
 
-/// Sign-in screen — frontend-only demo session, backend-ready structure.
+/// Sign-in screen — Django SimpleJWT login.
 class AuthView extends GetView<AuthController> {
   const AuthView({super.key});
 
@@ -47,16 +47,15 @@ class AuthView extends GetView<AuthController> {
                               ),
                               const SizedBox(height: 32),
                               TextFormField(
-                                controller: controller.emailController,
+                                controller: controller.usernameController,
                                 decoration: InputDecoration(
-                                  labelText: 'auth.email'.tr,
-                                  hintText: 'auth.emailHint'.tr,
-                                  prefixIcon: const Icon(Icons.email_outlined),
+                                  labelText: 'auth.username'.tr,
+                                  hintText: 'auth.usernameHint'.tr,
+                                  prefixIcon: const Icon(Icons.person_outline),
                                 ),
-                                keyboardType: TextInputType.emailAddress,
                                 textInputAction: TextInputAction.next,
-                                autofillHints: const [AutofillHints.email],
-                                validator: Validators.email,
+                                autofillHints: const [AutofillHints.username],
+                                validator: Validators.username,
                                 enabled: !loading,
                               ),
                               const SizedBox(height: 16),
