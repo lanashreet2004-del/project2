@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../core/utils/api_exception.dart';
 import '../models/history_model.dart';
 import '../models/ocr_result_model.dart';
 import '../models/json_preview_args.dart';
@@ -135,10 +136,7 @@ class DocumentDetailsController extends BaseController {
     clearError();
 
     try {
-      final file = await _pdfExportRepository.exportDocumentToPdf(
-        current,
-        status: exportStatus,
-      );
+      final file = await _pdfExportRepository.exportDocumentToPdf(current);
 
       if (file == null) {
         setError('details.exportPdfFailedTitle'.tr);
@@ -170,6 +168,13 @@ class DocumentDetailsController extends BaseController {
       );
 
       _showPdfExportSuccessDialog(file);
+    } on ApiException catch (e) {
+      setError(e.message);
+      Get.snackbar(
+        'details.exportPdf'.tr,
+        e.message,
+        snackPosition: SnackPosition.BOTTOM,
+      );
     } catch (e) {
       setError(e.toString());
       Get.snackbar(
@@ -215,6 +220,13 @@ class DocumentDetailsController extends BaseController {
 
       isExported.value = true;
       _showWordExportSuccessDialog(file);
+    } on ApiException catch (e) {
+      setError(e.message);
+      Get.snackbar(
+        'details.exportWord'.tr,
+        e.message,
+        snackPosition: SnackPosition.BOTTOM,
+      );
     } catch (e) {
       setError(e.toString());
       Get.snackbar(

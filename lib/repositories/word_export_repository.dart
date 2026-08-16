@@ -1,39 +1,70 @@
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:docx_creator/docx_creator.dart';
 import 'package:flutter/services.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../core/constants/api_constants.dart';
 import '../core/constants/export_constants.dart';
+import '../core/utils/api_exception.dart';
 import '../models/history_model.dart';
 import 'base_repository.dart';
+import 'history_repository.dart';
 
-/// Handles Word (.docx) export, sharing, and file access.
-/// Ready for backend upload and cloud sync.
+/// Handles Word (.docx) export (backend download), sharing, and file access.
+/// Offline [generateDocxBytes] remains for tests/offline utilities only.
 class WordExportRepository extends BaseRepository {
   WordExportRepository({
     required super.apiService,
     required super.storageService,
   });
 
+  /// Downloads a backend-generated DOCX for the OCR record and saves it locally.
   Future<File?> exportDocumentToWord(HistoryModel document) async {
-    final bytes = await generateDocxBytes(document);
-    if (bytes == null) return null;
+    final backendId = HistoryRepository.parseBackendId(document.id);
+    if (backendId == null) {
+      throw ApiException(
+        'This document cannot be exported from the server.',
+      );
+    }
 
     try {
-      final directory = await _ensureExportsDirectory();
-      final fileName =
-          '${ExportConstants.wordFilePrefix}${_sanitizeId(document.id)}${ExportConstants.wordFileExtension}';
-      final file = File('${directory.path}/$fileName');
-      await file.writeAsBytes(bytes);
-      return file;
-    } catch (_) {
-      return null;
+      final response = await apiService.get<List<int>>(
+        ApiConstants.ocrExportDocx(backendId),
+        options: Options(responseType: ResponseType.bytes),
+      );
+
+      final data = response.data;
+      if (data == null || data.isEmpty) {
+        throw ApiException('Empty DOCX response from server.');
+      }
+
+      final bytes = Uint8List.fromList(data);
+      if (!_looksLikeDocx(bytes)) {
+        throw ApiException('Server did not return a valid Word file.');
+      }
+
+      final preferredName = _fileNameFromHeaders(
+        response.headers,
+        backendId,
+      );
+      return _writeDocxBytes(bytes, preferredName);
+    } on DioException catch (e) {
+      throw _exceptionFromExportDio(e);
     }
   }
 
+  /// Human-readable title derived from OCR text.
+  String documentTitleOf(HistoryModel document) {
+    return _documentTitle(document.extractedText);
+  }
+
+  /// Builds a DOCX report in memory using bundled Arabic fonts (offline).
+  /// Used by tests / offline utilities — not by Document Details Export Word.
   Future<List<int>?> generateDocxBytes(HistoryModel document) async {
     try {
       final regularFontBytes =
@@ -143,6 +174,146 @@ class WordExportRepository extends BaseRepository {
     // Placeholder — cloud sync integration
   }
 
+  Future<Directory> _ensureExportsDirectory() async {
+    final baseDirectory = await getApplicationDocumentsDirectory();
+    final exportsDirectory = Directory(
+      '${baseDirectory.path}/${ExportConstants.exportsFolderName}/${ExportConstants.wordExportsSubfolder}',
+    );
+
+    if (!await exportsDirectory.exists()) {
+      await exportsDirectory.create(recursive: true);
+    }
+
+    return exportsDirectory;
+  }
+
+  Future<File> _writeDocxBytes(Uint8List bytes, String preferredName) async {
+    final directory = await _ensureExportsDirectory();
+    var fileName = _sanitizeFileName(
+      preferredName.toLowerCase().endsWith('.docx')
+          ? preferredName.substring(0, preferredName.length - 5)
+          : preferredName,
+    );
+    if (fileName.isEmpty) fileName = 'ocr_export';
+    fileName = '$fileName${ExportConstants.wordFileExtension}';
+
+    var file = File('${directory.path}${Platform.pathSeparator}$fileName');
+    if (await file.exists()) {
+      final stamp = DateTime.now().millisecondsSinceEpoch;
+      final base = fileName.substring(
+        0,
+        fileName.length - ExportConstants.wordFileExtension.length,
+      );
+      fileName = '${base}_$stamp${ExportConstants.wordFileExtension}';
+      file = File('${directory.path}${Platform.pathSeparator}$fileName');
+    }
+
+    await file.writeAsBytes(bytes, flush: true);
+    return file;
+  }
+
+  String _fileNameFromHeaders(Headers headers, int id) {
+    final cd = headers.value('content-disposition');
+    if (cd != null && cd.isNotEmpty) {
+      final quoted = RegExp(
+        r'filename="([^"]+)"',
+        caseSensitive: false,
+      ).firstMatch(cd);
+      if (quoted != null) {
+        final name = quoted.group(1)?.trim() ?? '';
+        if (name.toLowerCase().endsWith('.docx') && name.isNotEmpty) {
+          return name;
+        }
+      }
+      final plain = RegExp(
+        r'filename=([^;\s]+)',
+        caseSensitive: false,
+      ).firstMatch(cd);
+      if (plain != null) {
+        final name = plain.group(1)?.replaceAll('"', '').trim() ?? '';
+        if (name.toLowerCase().endsWith('.docx') && name.isNotEmpty) {
+          return name;
+        }
+      }
+    }
+    return 'ocr_export_$id.docx';
+  }
+
+  bool _looksLikeDocx(Uint8List bytes) {
+    if (bytes.length < 2) return false;
+    // DOCX is a ZIP package (PK..)
+    return bytes[0] == 0x50 && bytes[1] == 0x4B;
+  }
+
+  ApiException _exceptionFromExportDio(DioException error) {
+    final status = error.response?.statusCode;
+    final data = error.response?.data;
+
+    Map<String, dynamic>? map;
+    if (data is Map) {
+      map = Map<String, dynamic>.from(data);
+    } else if (data is List<int>) {
+      try {
+        final text = utf8.decode(data, allowMalformed: true).trim();
+        if (text.isNotEmpty) {
+          final decoded = jsonDecode(text);
+          if (decoded is Map) {
+            map = Map<String, dynamic>.from(decoded);
+          } else if (text.isNotEmpty) {
+            return ApiException(text, statusCode: status);
+          }
+        }
+      } catch (_) {
+        // Fall through to ApiException.fromDio.
+      }
+    } else if (data is String && data.trim().isNotEmpty) {
+      try {
+        final decoded = jsonDecode(data);
+        if (decoded is Map) {
+          map = Map<String, dynamic>.from(decoded);
+        } else {
+          return ApiException(data.trim(), statusCode: status);
+        }
+      } catch (_) {
+        return ApiException(data.trim(), statusCode: status);
+      }
+    }
+
+    if (map != null) {
+      final message = map['message'];
+      if (message is String && message.trim().isNotEmpty) {
+        final statusLabel = map['status'];
+        if (statusLabel is String && statusLabel.trim().isNotEmpty) {
+          return ApiException(
+            '${message.trim()} (${statusLabel.trim()})',
+            statusCode: status,
+          );
+        }
+        return ApiException(message.trim(), statusCode: status);
+      }
+    }
+
+    return ApiException.fromDio(error);
+  }
+
+  String _sanitizeFileName(String input) {
+    var name = input.trim();
+    if (name.isEmpty) name = 'document';
+
+    name = name.replaceAll(RegExp(r'[<>:"/\\|?*\x00-\x1F]'), '_');
+    name = name.replaceAll(RegExp(r'\s+'), ' ').trim();
+    if (name.endsWith('.')) {
+      name = name.substring(0, name.length - 1).trim();
+    }
+
+    const maxLength = 60;
+    if (name.length > maxLength) {
+      name = name.substring(0, maxLength).trim();
+    }
+
+    return name.isEmpty ? 'document' : name;
+  }
+
   DocxRawXml _infoLine(String label, String value) {
     final rtl = _containsArabic(value);
     final escapedLabel = _escapeXml(label);
@@ -240,24 +411,6 @@ class WordExportRepository extends BaseRepository {
 </w:p>''');
   }
 
-  Future<Directory> _ensureExportsDirectory() async {
-    final baseDirectory = await getApplicationDocumentsDirectory();
-    final exportsDirectory = Directory(
-      '${baseDirectory.path}/${ExportConstants.exportsFolderName}/${ExportConstants.wordExportsSubfolder}',
-    );
-
-    if (!await exportsDirectory.exists()) {
-      await exportsDirectory.create(recursive: true);
-    }
-
-    return exportsDirectory;
-  }
-
-  String _sanitizeId(String id) {
-    final sanitized = id.replaceAll(RegExp(r'[^\w\-]'), '_');
-    return sanitized.isEmpty ? 'unknown' : sanitized;
-  }
-
   String _formatDateTime(DateTime dateTime) {
     final day = dateTime.day.toString().padLeft(2, '0');
     final month = dateTime.month.toString().padLeft(2, '0');
@@ -265,10 +418,6 @@ class WordExportRepository extends BaseRepository {
     final hour = dateTime.hour.toString().padLeft(2, '0');
     final minute = dateTime.minute.toString().padLeft(2, '0');
     return '$day/$month/$year - $hour:$minute';
-  }
-
-  String documentTitleOf(HistoryModel document) {
-    return _documentTitle(document.extractedText);
   }
 
   String _documentTitle(String extractedText) {

@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
@@ -7,12 +9,15 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:share_plus/share_plus.dart';
 
+import '../core/constants/api_constants.dart';
 import '../core/constants/export_constants.dart';
+import '../core/utils/api_exception.dart';
 import '../models/history_model.dart';
 import 'base_repository.dart';
+import 'history_repository.dart';
 
-/// Handles PDF export, sharing, and file access.
-/// Ready for backend upload, cloud sync, and email delivery.
+/// Handles PDF export (backend download), sharing, and file access.
+/// Offline [generatePdfBytes] remains for tests/offline utilities only.
 class PdfExportRepository extends BaseRepository {
   PdfExportRepository({
     required super.apiService,
@@ -24,22 +29,44 @@ class PdfExportRepository extends BaseRepository {
   pw.Font? _latinRegularFont;
   pw.Font? _latinBoldFont;
 
+  /// Downloads a backend-generated PDF for the OCR record and saves it locally.
+  ///
+  /// [status] is unused (kept for call-site compatibility). PDF layout comes
+  /// entirely from the Django export API.
   Future<File?> exportDocumentToPdf(
     HistoryModel document, {
-    required String status,
+    String status = '',
   }) async {
-    final bytes = await generatePdfBytes(document, status: status);
-    if (bytes == null) return null;
+    final backendId = HistoryRepository.parseBackendId(document.id);
+    if (backendId == null) {
+      throw ApiException(
+        'This document cannot be exported from the server.',
+      );
+    }
 
     try {
-      final directory = await _ensurePdfExportsDirectory();
-      final title = documentTitleOf(document);
-      final fileName = _buildUniquePdfFileName(title);
-      final file = File('${directory.path}/$fileName');
-      await file.writeAsBytes(bytes);
-      return file;
-    } catch (_) {
-      return null;
+      final response = await apiService.get<List<int>>(
+        ApiConstants.ocrExportPdf(backendId),
+        options: Options(responseType: ResponseType.bytes),
+      );
+
+      final data = response.data;
+      if (data == null || data.isEmpty) {
+        throw ApiException('Empty PDF response from server.');
+      }
+
+      final bytes = Uint8List.fromList(data);
+      if (!_looksLikePdf(bytes)) {
+        throw ApiException('Server did not return a valid PDF file.');
+      }
+
+      final preferredName = _fileNameFromHeaders(
+        response.headers,
+        backendId,
+      );
+      return _writePdfBytes(bytes, preferredName);
+    } on DioException catch (e) {
+      throw _exceptionFromExportDio(e);
     }
   }
 
@@ -49,6 +76,7 @@ class PdfExportRepository extends BaseRepository {
   }
 
   /// Builds a PDF report in memory using bundled Arabic fonts (offline).
+  /// Used by tests / offline utilities — not by Document Details Export PDF.
   Future<Uint8List?> generatePdfBytes(
     HistoryModel document, {
     required String status,
@@ -657,10 +685,112 @@ class PdfExportRepository extends BaseRepository {
     return pdfDirectory;
   }
 
-  String _buildUniquePdfFileName(String title) {
-    final base = _sanitizeFileName(title);
-    final stamp = DateTime.now().millisecondsSinceEpoch;
-    return '${base}_$stamp${ExportConstants.pdfFileExtension}';
+  Future<File> _writePdfBytes(Uint8List bytes, String preferredName) async {
+    final directory = await _ensurePdfExportsDirectory();
+    var fileName = _sanitizeFileName(
+      preferredName.toLowerCase().endsWith('.pdf')
+          ? preferredName.substring(0, preferredName.length - 4)
+          : preferredName,
+    );
+    if (fileName.isEmpty) fileName = 'ocr_export';
+    fileName = '$fileName${ExportConstants.pdfFileExtension}';
+
+    var file = File('${directory.path}${Platform.pathSeparator}$fileName');
+    if (await file.exists()) {
+      final stamp = DateTime.now().millisecondsSinceEpoch;
+      final base = fileName.substring(0, fileName.length - 4);
+      fileName = '${base}_$stamp${ExportConstants.pdfFileExtension}';
+      file = File('${directory.path}${Platform.pathSeparator}$fileName');
+    }
+
+    await file.writeAsBytes(bytes, flush: true);
+    return file;
+  }
+
+  String _fileNameFromHeaders(Headers headers, int id) {
+    final cd = headers.value('content-disposition');
+    if (cd != null && cd.isNotEmpty) {
+      final quoted = RegExp(
+        r'filename="([^"]+)"',
+        caseSensitive: false,
+      ).firstMatch(cd);
+      if (quoted != null) {
+        final name = quoted.group(1)?.trim() ?? '';
+        if (name.toLowerCase().endsWith('.pdf') && name.isNotEmpty) {
+          return name;
+        }
+      }
+      final plain = RegExp(
+        r'filename=([^;\s]+)',
+        caseSensitive: false,
+      ).firstMatch(cd);
+      if (plain != null) {
+        final name = plain.group(1)?.replaceAll('"', '').trim() ?? '';
+        if (name.toLowerCase().endsWith('.pdf') && name.isNotEmpty) {
+          return name;
+        }
+      }
+    }
+    return 'ocr_export_$id.pdf';
+  }
+
+  bool _looksLikePdf(Uint8List bytes) {
+    if (bytes.length < 4) return false;
+    return bytes[0] == 0x25 &&
+        bytes[1] == 0x50 &&
+        bytes[2] == 0x44 &&
+        bytes[3] == 0x46; // %PDF
+  }
+
+  ApiException _exceptionFromExportDio(DioException error) {
+    final status = error.response?.statusCode;
+    final data = error.response?.data;
+
+    Map<String, dynamic>? map;
+    if (data is Map) {
+      map = Map<String, dynamic>.from(data);
+    } else if (data is List<int>) {
+      try {
+        final text = utf8.decode(data, allowMalformed: true).trim();
+        if (text.isNotEmpty) {
+          final decoded = jsonDecode(text);
+          if (decoded is Map) {
+            map = Map<String, dynamic>.from(decoded);
+          } else if (text.isNotEmpty) {
+            return ApiException(text, statusCode: status);
+          }
+        }
+      } catch (_) {
+        // Fall through to ApiException.fromDio.
+      }
+    } else if (data is String && data.trim().isNotEmpty) {
+      try {
+        final decoded = jsonDecode(data);
+        if (decoded is Map) {
+          map = Map<String, dynamic>.from(decoded);
+        } else {
+          return ApiException(data.trim(), statusCode: status);
+        }
+      } catch (_) {
+        return ApiException(data.trim(), statusCode: status);
+      }
+    }
+
+    if (map != null) {
+      final message = map['message'];
+      if (message is String && message.trim().isNotEmpty) {
+        final statusLabel = map['status'];
+        if (statusLabel is String && statusLabel.trim().isNotEmpty) {
+          return ApiException(
+            '${message.trim()} (${statusLabel.trim()})',
+            statusCode: status,
+          );
+        }
+        return ApiException(message.trim(), statusCode: status);
+      }
+    }
+
+    return ApiException.fromDio(error);
   }
 
   String _sanitizeFileName(String input) {
