@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 
 import '../models/history_model.dart';
 import '../models/ocr_result_model.dart';
+import '../models/text_editor_args.dart';
 import '../models/image_pick_source.dart';
 import '../repositories/history_repository.dart';
 import '../repositories/image_repository.dart';
@@ -88,7 +89,10 @@ class ResultController extends BaseController {
 
     final updated = await Get.toNamed(
       AppRoutes.textEditor,
-      arguments: current,
+      arguments: TextEditorArgs(
+        ocrResult: current,
+        persistToBackend: true,
+      ),
     );
 
     if (updated is OcrResultModel) {

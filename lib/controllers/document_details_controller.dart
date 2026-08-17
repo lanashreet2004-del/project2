@@ -7,6 +7,7 @@ import '../core/utils/api_exception.dart';
 import '../models/history_model.dart';
 import '../models/ocr_result_model.dart';
 import '../models/json_preview_args.dart';
+import '../models/text_editor_args.dart';
 import '../repositories/history_repository.dart';
 import '../repositories/pdf_export_repository.dart';
 import '../repositories/pdf_files_repository.dart';
@@ -105,14 +106,15 @@ class DocumentDetailsController extends BaseController {
 
     final updated = await Get.toNamed(
       AppRoutes.textEditor,
-      arguments: _toOcrResult(current),
+      arguments: TextEditorArgs(
+        ocrResult: _toOcrResult(current),
+        persistToBackend: true,
+      ),
     );
 
     if (updated is! OcrResultModel) return;
 
-    final saved = current.copyWith(extractedText: updated.extractedText);
-    final persisted = await runAsync(() => _repository.saveDocument(saved));
-    document.value = persisted ?? saved;
+    document.value = current.copyWith(extractedText: updated.extractedText);
     isEdited.value = true;
   }
 

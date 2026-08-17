@@ -13,7 +13,7 @@ class TextEditorView extends GetView<TextEditorController> {
   Widget build(BuildContext context) {
     return Obx(
       () => PopScope(
-        canPop: !controller.hasChanges.value,
+        canPop: !controller.hasChanges.value && !controller.isSaving.value,
         onPopInvokedWithResult: (didPop, _) async {
           if (didPop) return;
           await controller.onCancel();
@@ -23,7 +23,7 @@ class TextEditorView extends GetView<TextEditorController> {
           appBar: WavyAppBar(
             title: Text('textEditor.title'.tr),
             leading: TextButton(
-              onPressed: controller.onCancel,
+              onPressed: controller.isSaving.value ? null : controller.onCancel,
               child: Text(
                 'textEditor.cancel'.tr,
                 style: TextStyle(color: context.appColors.onAppBar),
@@ -32,14 +32,27 @@ class TextEditorView extends GetView<TextEditorController> {
             leadingWidth: 80,
             actions: [
               TextButton(
-                onPressed: controller.onDone,
-                child: Text(
-                  'textEditor.done'.tr,
-                  style: TextStyle(
-                    color: context.appColors.onAppBar,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+                onPressed:
+                    controller.isSaving.value ? null : controller.onDone,
+                child: controller.isSaving.value
+                    ? Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        child: SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: context.appColors.onAppBar,
+                          ),
+                        ),
+                      )
+                    : Text(
+                        'textEditor.done'.tr,
+                        style: TextStyle(
+                          color: context.appColors.onAppBar,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
               ),
             ],
           ),
@@ -65,6 +78,7 @@ class TextEditorView extends GetView<TextEditorController> {
                       textDirection: TextDirection.rtl,
                       child: TextField(
                         controller: controller.textController,
+                        enabled: !controller.isSaving.value,
                         maxLines: null,
                         expands: true,
                         textAlign: TextAlign.right,

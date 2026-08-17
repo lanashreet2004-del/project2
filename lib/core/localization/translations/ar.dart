@@ -238,6 +238,10 @@ const Map<String, String> arTranslations = {
   'textEditor.keepEditing': 'متابعة التعديل',
   'textEditor.emptyTitle': 'نص فارغ',
   'textEditor.emptyBody': 'يرجى إدخال نص قبل الحفظ.',
+  'textEditor.updateFailed': 'تعذّر تحديث النص المستخرج.',
+  'textEditor.invalidIdTitle': 'تعذّر تحديث النص',
+  'textEditor.invalidIdBody':
+      'هذا المستند لا يحتوي على معرّف OCR صالح في الخادم.',
 
   // Documents
   'documents.title': 'مستنداتي',

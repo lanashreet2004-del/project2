@@ -238,6 +238,10 @@ const Map<String, String> enTranslations = {
   'textEditor.keepEditing': 'Keep Editing',
   'textEditor.emptyTitle': 'Empty text',
   'textEditor.emptyBody': 'Please enter some text before saving.',
+  'textEditor.updateFailed': 'Could not update the extracted text.',
+  'textEditor.invalidIdTitle': 'Cannot update text',
+  'textEditor.invalidIdBody':
+      'This document does not have a valid backend OCR ID.',
 
   // Documents
   'documents.title': 'My Documents',
