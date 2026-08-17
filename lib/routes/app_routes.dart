@@ -22,4 +22,5 @@ class AppRoutes {
   static const String pdfFiles = '/pdf-files';
   static const String jsonFiles = '/json-files';
   static const String wordFiles = '/word-files';
+  static const String excelFiles = '/excel-files';
 }

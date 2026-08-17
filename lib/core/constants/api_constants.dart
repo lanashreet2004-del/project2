@@ -2,7 +2,7 @@
 class ApiConstants {
   ApiConstants._();
 
-  static const String baseUrl = 'http://10.65.0.87:8000';
+  static const String baseUrl = 'http://10.166.10.66:8000';
 
   static const Duration connectionTimeout = Duration(seconds: 30);
   static const Duration receiveTimeout = Duration(seconds: 30);
@@ -18,6 +18,7 @@ class ApiConstants {
   static String ocrStatus(Object id) => '/api/ocr-status/$id/';
   static String ocrExportPdf(Object id) => '/api/export-ocr/$id/pdf/';
   static String ocrExportDocx(Object id) => '/api/export-ocr/$id/docx/';
+  static String ocrExportXlsx(Object id) => '/api/export-ocr/$id/xlsx/';
 
   // Placeholders for future features — not wired yet
   static const String upload = '/upload';

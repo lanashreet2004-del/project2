@@ -14,6 +14,8 @@ import '../../repositories/pdf_export_repository.dart';
 import '../../repositories/pdf_files_repository.dart';
 import '../../repositories/word_export_repository.dart';
 import '../../repositories/word_files_repository.dart';
+import '../../repositories/excel_export_repository.dart';
+import '../../repositories/excel_files_repository.dart';
 import '../../repositories/onboarding_repository.dart';
 import '../../repositories/text_edit_repository.dart';
 import '../services/api_service.dart';
@@ -161,6 +163,22 @@ class InitialBinding extends Bindings {
 
     Get.lazyPut<WordFilesRepository>(
       () => WordFilesRepository(
+        apiService: Get.find<ApiService>(),
+        storageService: Get.find<StorageService>(),
+      ),
+      fenix: true,
+    );
+
+    Get.lazyPut<ExcelExportRepository>(
+      () => ExcelExportRepository(
+        apiService: Get.find<ApiService>(),
+        storageService: Get.find<StorageService>(),
+      ),
+      fenix: true,
+    );
+
+    Get.lazyPut<ExcelFilesRepository>(
+      () => ExcelFilesRepository(
         apiService: Get.find<ApiService>(),
         storageService: Get.find<StorageService>(),
       ),

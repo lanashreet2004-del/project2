@@ -4,9 +4,14 @@ import 'package:get/get.dart';
 import '../../../core/theme/app_theme_context.dart';
 
 class DocumentExtractedTextCard extends StatelessWidget {
-  const DocumentExtractedTextCard({super.key, required this.text});
+  const DocumentExtractedTextCard({
+    super.key,
+    required this.text,
+    this.onEdit,
+  });
 
   final String text;
+  final VoidCallback? onEdit;
 
   @override
   Widget build(BuildContext context) {
@@ -18,11 +23,34 @@ class DocumentExtractedTextCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'details.extractedText'.tr,
-              style: context.texts.titleMedium?.copyWith(
-                fontWeight: FontWeight.w700,
-              ),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    'details.extractedText'.tr,
+                    style: context.texts.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+                if (onEdit != null)
+                  IconButton(
+                    key: const Key('extracted_text_edit'),
+                    icon: const Icon(Icons.edit_outlined, size: 18),
+                    tooltip: 'details.editText'.tr,
+                    onPressed: onEdit,
+                    visualDensity: VisualDensity.compact,
+                    padding: const EdgeInsets.all(4),
+                    constraints: const BoxConstraints(
+                      minWidth: 28,
+                      minHeight: 28,
+                    ),
+                    style: IconButton.styleFrom(
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      foregroundColor: context.colors.primary,
+                    ),
+                  ),
+              ],
             ),
             const SizedBox(height: 12),
             ConstrainedBox(

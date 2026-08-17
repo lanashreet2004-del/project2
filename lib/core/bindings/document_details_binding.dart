@@ -7,6 +7,8 @@ import '../../repositories/pdf_export_repository.dart';
 import '../../repositories/pdf_files_repository.dart';
 import '../../repositories/word_export_repository.dart';
 import '../../repositories/word_files_repository.dart';
+import '../../repositories/excel_export_repository.dart';
+import '../../repositories/excel_files_repository.dart';
 
 class DocumentDetailsBinding extends Bindings {
   @override
@@ -18,6 +20,8 @@ class DocumentDetailsBinding extends Bindings {
         pdfFilesRepository: Get.find<PdfFilesRepository>(),
         wordExportRepository: Get.find<WordExportRepository>(),
         wordFilesRepository: Get.find<WordFilesRepository>(),
+        excelExportRepository: Get.find<ExcelExportRepository>(),
+        excelFilesRepository: Get.find<ExcelFilesRepository>(),
         document: Get.arguments as HistoryModel,
       ),
     );

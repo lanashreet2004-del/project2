@@ -12,6 +12,8 @@ import '../repositories/pdf_export_repository.dart';
 import '../repositories/pdf_files_repository.dart';
 import '../repositories/word_export_repository.dart';
 import '../repositories/word_files_repository.dart';
+import '../repositories/excel_export_repository.dart';
+import '../repositories/excel_files_repository.dart';
 import '../routes/app_routes.dart';
 import 'base_controller.dart';
 
@@ -23,12 +25,16 @@ class DocumentDetailsController extends BaseController {
     required PdfFilesRepository pdfFilesRepository,
     required WordExportRepository wordExportRepository,
     required WordFilesRepository wordFilesRepository,
+    required ExcelExportRepository excelExportRepository,
+    required ExcelFilesRepository excelFilesRepository,
     required HistoryModel document,
   })  : _repository = repository,
         _pdfExportRepository = pdfExportRepository,
         _pdfFilesRepository = pdfFilesRepository,
         _wordExportRepository = wordExportRepository,
-        _wordFilesRepository = wordFilesRepository {
+        _wordFilesRepository = wordFilesRepository,
+        _excelExportRepository = excelExportRepository,
+        _excelFilesRepository = excelFilesRepository {
     this.document.value = document;
   }
 
@@ -37,12 +43,15 @@ class DocumentDetailsController extends BaseController {
   final PdfFilesRepository _pdfFilesRepository;
   final WordExportRepository _wordExportRepository;
   final WordFilesRepository _wordFilesRepository;
+  final ExcelExportRepository _excelExportRepository;
+  final ExcelFilesRepository _excelFilesRepository;
 
   final Rxn<HistoryModel> document = Rxn<HistoryModel>();
   final RxBool isEdited = false.obs;
   final RxBool isExported = false.obs;
   final RxBool isExportingPdf = false.obs;
   final RxBool isExportingWord = false.obs;
+  final RxBool isExportingExcel = false.obs;
 
   @override
   void onInit() {
@@ -237,6 +246,91 @@ class DocumentDetailsController extends BaseController {
     } finally {
       isExportingWord.value = false;
     }
+  }
+
+  Future<void> exportExcel() async {
+    final current = document.value;
+    if (current == null || isExportingExcel.value) return;
+
+    isExportingExcel.value = true;
+    clearError();
+
+    try {
+      final file = await _excelExportRepository.exportDocumentToExcel(current);
+
+      if (file == null) {
+        setError('details.exportExcelFailedTitle'.tr);
+        Get.snackbar(
+          'details.exportExcel'.tr,
+          'details.exportExcelFailed'.tr,
+          snackPosition: SnackPosition.BOTTOM,
+        );
+        return;
+      }
+
+      final title = _excelExportRepository.documentTitleOf(current);
+      try {
+        await _excelFilesRepository.registerExportedExcel(
+          file: file,
+          document: current,
+          documentTitle: title,
+        );
+      } catch (_) {
+        // Export succeeded; library registration failure should not block UX.
+      }
+
+      isExported.value = true;
+      _showExcelExportSuccessDialog(file);
+    } on ApiException catch (e) {
+      setError(e.message);
+      Get.snackbar(
+        'details.exportExcel'.tr,
+        e.message,
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } catch (e) {
+      setError(e.toString());
+      Get.snackbar(
+        'details.exportExcel'.tr,
+        'details.exportExcelFailed'.tr,
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } finally {
+      isExportingExcel.value = false;
+    }
+  }
+
+  void _showExcelExportSuccessDialog(File file) {
+    Get.dialog<void>(
+      AlertDialog(
+        title: Text('details.exportExcelSuccess'.tr),
+        content: Text(
+          file.path,
+          style: const TextStyle(fontSize: 13),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () async {
+              Get.back();
+              await _excelExportRepository.openExportedFile(file);
+            },
+            child: Text('details.openFile'.tr),
+          ),
+          TextButton(
+            onPressed: () async {
+              Get.back();
+              await _excelExportRepository.shareExportedFile(file);
+            },
+            child: Text('details.shareFile'.tr),
+          ),
+          TextButton(
+            onPressed: Get.back,
+            child: Text('common.close'.tr),
+          ),
+        ],
+      ),
+      barrierDismissible: true,
+    );
   }
 
   void _showWordExportSuccessDialog(File file) {

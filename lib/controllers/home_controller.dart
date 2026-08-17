@@ -230,6 +230,11 @@ class HomeController extends BaseController {
     await Get.toNamed(AppRoutes.wordFiles);
   }
 
+  Future<void> openExcelFiles() async {
+    _closeDrawer();
+    await Get.toNamed(AppRoutes.excelFiles);
+  }
+
   void openSettings() {
     _closeDrawer();
     MainNavigation.openTab(MainNavigation.settings);

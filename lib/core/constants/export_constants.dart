@@ -11,6 +11,9 @@ class ExportConstants {
   static const String wordExportsSubfolder = 'word';
   static const String wordFilePrefix = 'document_';
   static const String wordFileExtension = '.docx';
+  static const String excelExportsSubfolder = 'excel';
+  static const String excelFilePrefix = 'document_';
+  static const String excelFileExtension = '.xlsx';
   static const String appExportTitle = 'Satr OCR';
   static const String wordFontRegularFamily = 'Noto Sans Arabic';
   static const String wordFontBoldFamily = 'Noto Sans Arabic Bold';

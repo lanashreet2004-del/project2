@@ -34,8 +34,9 @@ class DocumentDetailsView extends GetView<DocumentDetailsController> {
           return Center(child: Text('details.notFound'.tr));
         }
 
-        final exporting =
-            controller.isExportingPdf.value || controller.isExportingWord.value;
+        final exporting = controller.isExportingPdf.value ||
+            controller.isExportingWord.value ||
+            controller.isExportingExcel.value;
 
         return ResponsiveContainer(
           maxWidth: 800,
@@ -49,15 +50,20 @@ class DocumentDetailsView extends GetView<DocumentDetailsController> {
                   onTap: controller.openFullScreenPreview,
                 ),
                 const SizedBox(height: 16),
-                DocumentExtractedTextCard(text: document.extractedText),
+                DocumentExtractedTextCard(
+                  text: document.extractedText,
+                  onEdit: controller.openTextEditor,
+                ),
                 const SizedBox(height: 20),
                 DocumentActionsGrid(
                   actions: [
                     DocumentActionItem(
-                      label: 'details.editText'.tr,
-                      icon: Icons.edit_outlined,
-                      isEnabled: !exporting,
-                      onTap: controller.openTextEditor,
+                      label: 'details.exportExcel'.tr,
+                      icon: Icons.table_chart_outlined,
+                      isLoading: controller.isExportingExcel.value,
+                      isEnabled: !controller.isExportingPdf.value &&
+                          !controller.isExportingWord.value,
+                      onTap: controller.exportExcel,
                     ),
                     DocumentActionItem(
                       label: 'details.exportJson'.tr,
@@ -69,14 +75,16 @@ class DocumentDetailsView extends GetView<DocumentDetailsController> {
                       label: 'details.exportPdf'.tr,
                       icon: Icons.picture_as_pdf_outlined,
                       isLoading: controller.isExportingPdf.value,
-                      isEnabled: !controller.isExportingWord.value,
+                      isEnabled: !controller.isExportingWord.value &&
+                          !controller.isExportingExcel.value,
                       onTap: controller.exportPdf,
                     ),
                     DocumentActionItem(
                       label: 'details.exportWord'.tr,
                       icon: Icons.description_outlined,
                       isLoading: controller.isExportingWord.value,
-                      isEnabled: !controller.isExportingPdf.value,
+                      isEnabled: !controller.isExportingPdf.value &&
+                          !controller.isExportingExcel.value,
                       onTap: controller.exportWord,
                     ),
                   ],

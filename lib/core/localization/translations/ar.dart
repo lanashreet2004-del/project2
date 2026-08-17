@@ -47,6 +47,7 @@ const Map<String, String> arTranslations = {
   'nav.myDocuments': 'مستنداتي',
   'nav.jsonFiles': 'ملفات JSON',
   'nav.wordFiles': 'ملفات Word',
+  'nav.excelFiles': 'ملفات Excel',
   'nav.profile': 'الملف الشخصي',
   'nav.account': 'الحساب',
 
@@ -259,6 +260,7 @@ const Map<String, String> arTranslations = {
   'details.notFound': 'المستند غير موجود',
   'details.editText': 'تعديل النص',
   'details.exportJson': 'تصدير JSON',
+  'details.exportExcel': 'تصدير Excel',
   'details.exportPdf': 'تصدير PDF',
   'details.exportWord': 'تصدير Word',
   'details.deleteDocument': 'حذف المستند',
@@ -284,6 +286,9 @@ const Map<String, String> arTranslations = {
   'details.exportWordSuccess': 'تم تصدير Word بنجاح',
   'details.exportWordFailed': 'تعذّر تصدير ملف Word.',
   'details.exportWordFailedTitle': 'فشل تصدير مستند Word',
+  'details.exportExcelSuccess': 'تم تصدير Excel بنجاح',
+  'details.exportExcelFailed': 'تعذّر تصدير ملف Excel.',
+  'details.exportExcelFailedTitle': 'فشل تصدير جدول Excel',
   'details.exportSuccessTitle': 'تم التصدير بنجاح',
   'details.openFile': 'فتح',
   'details.shareFile': 'مشاركة',
@@ -342,6 +347,23 @@ const Map<String, String> arTranslations = {
   'wordFiles.deleted': 'تم حذف ملف Word بنجاح',
   'wordFiles.deleteFailed': 'تعذّر حذف ملف Word هذا.',
   'wordFiles.staleRemoved': 'تمت إزالة ملف Word المفقود من المكتبة',
+
+  // Excel files
+  'excelFiles.title': 'ملفات Excel',
+  'excelFiles.emptyTitle': 'لا توجد ملفات Excel بعد',
+  'excelFiles.emptyBody': 'صدّر مستنداً كـ Excel ليظهر هنا.',
+  'excelFiles.actions': 'إجراءات Excel',
+  'excelFiles.missingBody':
+      'ملف Excel هذا لم يعد متوفراً على الجهاز. هل تريد إزالته من المكتبة؟',
+  'excelFiles.deleteTitle': 'حذف ملف Excel؟',
+  'excelFiles.deleteBody':
+      'ستتم إزالة «@name» من المكتبة وحذفه من هذا الجهاز. لن يتأثر مستند OCR الأصلي.',
+  'excelFiles.missingSnackbar': 'ملف Excel هذا لم يعد موجوداً على الجهاز.',
+  'excelFiles.openFailed': 'تعذّر فتح ملف Excel هذا.',
+  'excelFiles.shareFailed': 'تعذّرت مشاركة ملف Excel هذا.',
+  'excelFiles.deleted': 'تم حذف ملف Excel بنجاح',
+  'excelFiles.deleteFailed': 'تعذّر حذف ملف Excel هذا.',
+  'excelFiles.staleRemoved': 'تمت إزالة ملف Excel المفقود من المكتبة',
 
   // JSON preview
   'jsonPreview.title': 'معاينة JSON',

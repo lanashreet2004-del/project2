@@ -4,7 +4,14 @@ import 'package:get/get.dart';
 import '../../../core/theme/app_theme_context.dart';
 import '../../../core/widgets/language_selector.dart';
 
-enum DrawerDestination { documents, pdfFiles, jsonFiles, wordFiles, settings }
+enum DrawerDestination {
+  documents,
+  pdfFiles,
+  wordFiles,
+  excelFiles,
+  jsonFiles,
+  settings,
+}
 
 /// Home drawer — secondary access to documents, export libraries, settings, theme, language, auth.
 class AppDrawer extends StatelessWidget {
@@ -17,8 +24,9 @@ class AppDrawer extends StatelessWidget {
     required this.selectedDestination,
     required this.onDocumentsTap,
     required this.onPdfFilesTap,
-    required this.onJsonFilesTap,
     required this.onWordFilesTap,
+    required this.onExcelFilesTap,
+    required this.onJsonFilesTap,
     required this.onSettingsTap,
     required this.onDarkModeChanged,
     required this.onSignInTap,
@@ -33,8 +41,9 @@ class AppDrawer extends StatelessWidget {
   final DrawerDestination? selectedDestination;
   final VoidCallback onDocumentsTap;
   final VoidCallback onPdfFilesTap;
-  final VoidCallback onJsonFilesTap;
   final VoidCallback onWordFilesTap;
+  final VoidCallback onExcelFilesTap;
+  final VoidCallback onJsonFilesTap;
   final VoidCallback onSettingsTap;
   final ValueChanged<bool> onDarkModeChanged;
   final VoidCallback onSignInTap;
@@ -123,20 +132,28 @@ class AppDrawer extends StatelessWidget {
                     onTap: onPdfFilesTap,
                   ),
                   _DrawerNavTile(
-                    icon: Icons.data_object_outlined,
-                    selectedIcon: Icons.data_object_rounded,
-                    label: 'nav.jsonFiles'.tr,
-                    selected:
-                        selectedDestination == DrawerDestination.jsonFiles,
-                    onTap: onJsonFilesTap,
-                  ),
-                  _DrawerNavTile(
                     icon: Icons.description_outlined,
                     selectedIcon: Icons.description_rounded,
                     label: 'nav.wordFiles'.tr,
                     selected:
                         selectedDestination == DrawerDestination.wordFiles,
                     onTap: onWordFilesTap,
+                  ),
+                  _DrawerNavTile(
+                    icon: Icons.table_chart_outlined,
+                    selectedIcon: Icons.table_chart_rounded,
+                    label: 'nav.excelFiles'.tr,
+                    selected:
+                        selectedDestination == DrawerDestination.excelFiles,
+                    onTap: onExcelFilesTap,
+                  ),
+                  _DrawerNavTile(
+                    icon: Icons.data_object_outlined,
+                    selectedIcon: Icons.data_object_rounded,
+                    label: 'nav.jsonFiles'.tr,
+                    selected:
+                        selectedDestination == DrawerDestination.jsonFiles,
+                    onTap: onJsonFilesTap,
                   ),
                   _DrawerNavTile(
                     icon: Icons.settings_outlined,

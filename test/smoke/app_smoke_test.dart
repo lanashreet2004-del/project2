@@ -60,6 +60,7 @@ void main() {
         AppRoutes.result,
         AppRoutes.documents,
         AppRoutes.documentDetails,
+        AppRoutes.excelFiles,
       ]),
     );
 

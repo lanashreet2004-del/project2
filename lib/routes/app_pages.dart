@@ -8,6 +8,7 @@ import '../core/bindings/image_editor_binding.dart';
 import '../core/bindings/json_files_binding.dart';
 import '../core/bindings/json_preview_binding.dart';
 import '../core/bindings/word_files_binding.dart';
+import '../core/bindings/excel_files_binding.dart';
 import '../core/bindings/main_shell_binding.dart';
 import '../core/bindings/onboarding_binding.dart';
 import '../core/bindings/splash_binding.dart';
@@ -28,6 +29,7 @@ import '../views/image_editor/image_editor_view.dart';
 import '../views/json_files/json_files_view.dart';
 import '../views/json_preview/json_preview_view.dart';
 import '../views/word_files/word_files_view.dart';
+import '../views/excel_files/excel_files_view.dart';
 import '../views/main/main_shell_view.dart';
 import '../views/onboarding/onboarding_view.dart';
 import '../views/splash/splash_view.dart';
@@ -156,6 +158,12 @@ class AppPages {
       name: AppRoutes.wordFiles,
       page: () => const WordFilesView(),
       binding: WordFilesBinding(),
+      transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: AppRoutes.excelFiles,
+      page: () => const ExcelFilesView(),
+      binding: ExcelFilesBinding(),
       transition: Transition.rightToLeft,
     ),
     GetPage(

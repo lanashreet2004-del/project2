@@ -47,6 +47,7 @@ const Map<String, String> enTranslations = {
   'nav.myDocuments': 'My Documents',
   'nav.jsonFiles': 'JSON Files',
   'nav.wordFiles': 'Word Files',
+  'nav.excelFiles': 'Excel Files',
   'nav.profile': 'Profile',
   'nav.account': 'Account',
 
@@ -259,6 +260,7 @@ const Map<String, String> enTranslations = {
   'details.notFound': 'Document not found',
   'details.editText': 'Edit Text',
   'details.exportJson': 'Export JSON',
+  'details.exportExcel': 'Export Excel',
   'details.exportPdf': 'Export PDF',
   'details.exportWord': 'Export Word',
   'details.deleteDocument': 'Delete Document',
@@ -284,6 +286,9 @@ const Map<String, String> enTranslations = {
   'details.exportWordSuccess': 'Word exported successfully',
   'details.exportWordFailed': 'Could not export Word file.',
   'details.exportWordFailedTitle': 'Failed to export Word document',
+  'details.exportExcelSuccess': 'Excel exported successfully',
+  'details.exportExcelFailed': 'Could not export Excel file.',
+  'details.exportExcelFailedTitle': 'Failed to export Excel spreadsheet',
   'details.exportSuccessTitle': 'Export successful',
   'details.openFile': 'Open',
   'details.shareFile': 'Share',
@@ -342,6 +347,23 @@ const Map<String, String> enTranslations = {
   'wordFiles.deleted': 'Word file deleted successfully',
   'wordFiles.deleteFailed': 'Could not delete this Word file.',
   'wordFiles.staleRemoved': 'Removed missing Word file from library',
+
+  // Excel files
+  'excelFiles.title': 'Excel Files',
+  'excelFiles.emptyTitle': 'No Excel files yet',
+  'excelFiles.emptyBody': 'Export a document as Excel and it will appear here.',
+  'excelFiles.actions': 'Excel actions',
+  'excelFiles.missingBody':
+      'This Excel file is no longer available on the device. Remove it from the library?',
+  'excelFiles.deleteTitle': 'Delete Excel file?',
+  'excelFiles.deleteBody':
+      '“@name” will be removed from the library and deleted from this device. The original OCR document will not be affected.',
+  'excelFiles.missingSnackbar': 'This Excel file is no longer on the device.',
+  'excelFiles.openFailed': 'Could not open this Excel file.',
+  'excelFiles.shareFailed': 'Could not share this Excel file.',
+  'excelFiles.deleted': 'Excel file deleted successfully',
+  'excelFiles.deleteFailed': 'Could not delete this Excel file.',
+  'excelFiles.staleRemoved': 'Removed missing Excel file from library',
 
   // JSON preview
   'jsonPreview.title': 'JSON Preview',

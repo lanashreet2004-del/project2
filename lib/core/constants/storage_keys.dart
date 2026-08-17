@@ -15,4 +15,5 @@ class StorageKeys {
   static const String pdfFilesLibrary = 'pdf_files_library';
   static const String jsonFilesLibrary = 'json_files_library';
   static const String wordFilesLibrary = 'word_files_library';
+  static const String excelFilesLibrary = 'excel_files_library';
 }
