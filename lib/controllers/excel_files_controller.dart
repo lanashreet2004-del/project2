@@ -22,7 +22,7 @@ class ExcelFilesController extends BaseController {
 
   Future<void> loadExcelFiles() async {
     final data = await runAsync(() => _repository.getExcelFiles());
-    if (data != null) excelFiles.assignAll(data);
+    excelFiles.assignAll(data ?? const []);
   }
 
   Future<void> openExcel(ExcelFileModel item) async {

@@ -22,7 +22,7 @@ class PdfFilesController extends BaseController {
 
   Future<void> loadPdfFiles() async {
     final data = await runAsync(() => _repository.getPdfFiles());
-    if (data != null) pdfFiles.assignAll(data);
+    pdfFiles.assignAll(data ?? const []);
   }
 
   Future<void> openPdf(PdfFileModel item) async {

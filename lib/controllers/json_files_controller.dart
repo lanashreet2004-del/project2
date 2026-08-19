@@ -22,7 +22,7 @@ class JsonFilesController extends BaseController {
 
   Future<void> loadJsonFiles() async {
     final data = await runAsync(() => _repository.getJsonFiles());
-    if (data != null) jsonFiles.assignAll(data);
+    jsonFiles.assignAll(data ?? const []);
   }
 
   Future<void> openJson(JsonFileModel item) async {

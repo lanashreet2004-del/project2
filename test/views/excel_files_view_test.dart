@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:p2/controllers/excel_files_controller.dart';
+import 'package:p2/core/constants/storage_keys.dart';
 import 'package:p2/core/localization/app_translations.dart';
 import 'package:p2/core/localization/locale_controller.dart';
 import 'package:p2/core/services/api_service.dart';
@@ -53,6 +54,7 @@ void main() {
     await GetStorage('excel_files_ui_test').erase();
     final storageService =
         StorageService(box: GetStorage('excel_files_ui_test'));
+    await storageService.write(StorageKeys.userId, 'user_a');
     final repository = ExcelFilesRepository(
       apiService: ApiService(),
       storageService: storageService,

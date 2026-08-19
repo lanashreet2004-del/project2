@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:p2/core/constants/storage_keys.dart';
 import 'package:p2/core/services/api_service.dart';
 import 'package:p2/core/services/storage_service.dart';
 import 'package:p2/models/history_model.dart';
@@ -42,6 +43,7 @@ void main() {
     );
     await excelDir.create(recursive: true);
     await GetStorage('excel_files_library_test').erase();
+    await repository.storageService.write(StorageKeys.userId, 'user_a');
   });
 
   tearDownAll(() async {
@@ -156,5 +158,41 @@ void main() {
     expect(await repository.fileExists(entry), isTrue);
     expect(entry.fileName.toLowerCase().endsWith('.xlsx'), isTrue);
     expect(File(entry.filePath).existsSync(), isTrue);
+  });
+
+  test('generated files are isolated by signed-in user', () async {
+    final file = await writeXlsx(name: 'ocr_export_user_a.xlsx');
+    await repository.registerExportedExcel(
+      file: file,
+      document: _doc(id: '7'),
+      documentTitle: 'user a',
+    );
+
+    expect(await repository.getExcelFiles(), isNotEmpty);
+
+    await repository.storageService.write(StorageKeys.userId, 'user_b');
+    expect(await repository.getExcelFiles(), isEmpty);
+
+    await repository.storageService.write(StorageKeys.userId, 'user_a');
+    final restored = await repository.getExcelFiles();
+    expect(restored, isNotEmpty);
+    expect(restored.first.fileName, 'ocr_export_user_a.xlsx');
+  });
+
+  test('unsigned session cannot read or write the generated-files catalog',
+      () async {
+    await repository.storageService.remove(StorageKeys.userId);
+    final file = await writeXlsx(name: 'ocr_export_unsigned.xlsx');
+    await repository.registerExportedExcel(
+      file: file,
+      document: _doc(id: '8'),
+      documentTitle: 'unsigned',
+    );
+
+    expect(await repository.getExcelFiles(), isEmpty);
+    expect(
+      repository.storageService.read<List<dynamic>>(StorageKeys.excelFilesLibrary),
+      isNull,
+    );
   });
 }

@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:p2/core/constants/api_constants.dart';
+import 'package:p2/core/constants/storage_keys.dart';
 import 'package:p2/core/services/api_service.dart';
 import 'package:p2/core/services/storage_service.dart';
 import 'package:p2/core/utils/api_exception.dart';
@@ -80,7 +81,7 @@ void main() {
     await GetStorage.init('excel_export_test');
   });
 
-  setUp(() {
+  setUp(() async {
     adapter = _RecordingAdapter();
     final dio = Dio(
       BaseOptions(
@@ -92,6 +93,7 @@ void main() {
     apiService = ApiService(dio: dio);
     apiService.setAuthToken('test-access-token');
     storageService = StorageService(box: GetStorage('excel_export_test'));
+    await storageService.write(StorageKeys.userId, 'user_a');
     repository = ExcelExportRepository(
       apiService: apiService,
       storageService: storageService,

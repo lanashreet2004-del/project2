@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 
 import '../core/constants/api_constants.dart';
 import '../core/constants/storage_keys.dart';
 import '../core/utils/api_exception.dart';
+import '../core/utils/user_scoped_library.dart';
 import '../models/auth_tokens_response.dart';
 import '../models/user_model.dart';
 import '../routes/app_routes.dart';
@@ -34,8 +37,12 @@ class AuthRepository extends BaseRepository {
       apiService.setAuthToken(access);
     } else {
       apiService.setAuthToken(null);
+      unawaited(UserScopedLibrary.discardUnscopedIfUnsigned(storageService));
     }
   }
+
+  /// Reloads user-scoped generated-file libraries after login/logout.
+  Future<void> Function()? onSessionChanged;
 
   /// Clears local session and navigates to login. Used on 401.
   Future<void> handleUnauthorized() async {
@@ -123,12 +130,14 @@ class AuthRepository extends BaseRepository {
   }
 
   Future<void> clearLocalSession() async {
+    await UserScopedLibrary.migrateLegacyForCurrentUser(storageService);
     apiService.setAuthToken(null);
     await storageService.remove(StorageKeys.authToken);
     await storageService.remove(StorageKeys.refreshToken);
     await storageService.remove(StorageKeys.userId);
     await storageService.remove(StorageKeys.userEmail);
     await storageService.remove(StorageKeys.userName);
+    await onSessionChanged?.call();
   }
 
   UserModel? getCurrentUser() {
@@ -163,6 +172,7 @@ class AuthRepository extends BaseRepository {
     if (user.name != null) {
       await storageService.write(StorageKeys.userName, user.name);
     }
+    await onSessionChanged?.call();
   }
 
   Map<String, dynamic> _asMap(dynamic data) {

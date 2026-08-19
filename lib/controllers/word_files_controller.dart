@@ -22,7 +22,7 @@ class WordFilesController extends BaseController {
 
   Future<void> loadWordFiles() async {
     final data = await runAsync(() => _repository.getWordFiles());
-    if (data != null) wordFiles.assignAll(data);
+    wordFiles.assignAll(data ?? const []);
   }
 
   Future<void> openWord(WordFileModel item) async {

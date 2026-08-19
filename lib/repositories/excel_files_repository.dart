@@ -5,6 +5,7 @@ import 'package:share_plus/share_plus.dart';
 
 import '../core/constants/export_constants.dart';
 import '../core/constants/storage_keys.dart';
+import '../core/utils/user_scoped_library.dart';
 import '../models/excel_file_model.dart';
 import '../models/history_model.dart';
 import 'base_repository.dart';
@@ -109,9 +110,11 @@ class ExcelFilesRepository extends BaseRepository {
   }
 
   Future<List<ExcelFileModel>> _readAll() async {
-    final raw =
-        storageService.read<List<dynamic>>(StorageKeys.excelFilesLibrary);
-    if (raw == null || raw.isEmpty) return [];
+    final raw = await UserScopedLibrary.read(
+      storageService,
+      StorageKeys.excelFilesLibrary,
+    );
+    if (raw.isEmpty) return [];
 
     return raw
         .map(
@@ -123,7 +126,8 @@ class ExcelFilesRepository extends BaseRepository {
   }
 
   Future<void> _writeAll(List<ExcelFileModel> items) async {
-    await storageService.write(
+    await UserScopedLibrary.write(
+      storageService,
       StorageKeys.excelFilesLibrary,
       items.map((item) => item.toJson()).toList(),
     );

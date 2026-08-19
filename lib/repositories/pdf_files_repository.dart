@@ -5,6 +5,7 @@ import 'package:share_plus/share_plus.dart';
 
 import '../core/constants/export_constants.dart';
 import '../core/constants/storage_keys.dart';
+import '../core/utils/user_scoped_library.dart';
 import '../models/history_model.dart';
 import '../models/pdf_file_model.dart';
 import 'base_repository.dart';
@@ -114,8 +115,11 @@ class PdfFilesRepository extends BaseRepository {
   }
 
   Future<List<PdfFileModel>> _readAll() async {
-    final raw = storageService.read<List<dynamic>>(StorageKeys.pdfFilesLibrary);
-    if (raw == null || raw.isEmpty) return [];
+    final raw = await UserScopedLibrary.read(
+      storageService,
+      StorageKeys.pdfFilesLibrary,
+    );
+    if (raw.isEmpty) return [];
 
     return raw
         .map(
@@ -127,7 +131,8 @@ class PdfFilesRepository extends BaseRepository {
   }
 
   Future<void> _writeAll(List<PdfFileModel> items) async {
-    await storageService.write(
+    await UserScopedLibrary.write(
+      storageService,
       StorageKeys.pdfFilesLibrary,
       items.map((item) => item.toJson()).toList(),
     );
