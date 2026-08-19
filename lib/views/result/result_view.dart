@@ -71,7 +71,11 @@ class ResultView extends GetView<ResultController> {
                       processedAt: result.processedAt,
                     ),
                     const SizedBox(height: 16),
-                    ResultExtractedTextCard(text: result.extractedText),
+                    Obx(
+                      () => ResultExtractedTextCard(
+                        text: controller.result.value?.extractedText ?? '',
+                      ),
+                    ),
                     const SizedBox(height: 24),
                     SizedBox(
                       height: 52,

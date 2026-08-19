@@ -85,6 +85,7 @@ class TextEditorController extends BaseController {
 
     if (!persistToBackend) {
       final updated = _repository.applyTextEdit(_ocrResult, text);
+      hasChanges.value = false;
       Get.back(result: updated);
       return;
     }
@@ -107,8 +108,11 @@ class TextEditorController extends BaseController {
         original: _ocrResult,
         editedText: text,
       );
+      hasChanges.value = false;
+      isSaving.value = false;
       Get.back(result: updated);
     } on ApiException catch (e) {
+      isSaving.value = false;
       setError(e.message);
       Get.snackbar(
         'textEditor.title'.tr,
@@ -116,14 +120,13 @@ class TextEditorController extends BaseController {
         snackPosition: SnackPosition.BOTTOM,
       );
     } catch (e) {
+      isSaving.value = false;
       setError(e.toString());
       Get.snackbar(
         'textEditor.title'.tr,
         'textEditor.updateFailed'.tr,
         snackPosition: SnackPosition.BOTTOM,
       );
-    } finally {
-      isSaving.value = false;
     }
   }
 

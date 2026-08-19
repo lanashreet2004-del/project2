@@ -136,6 +136,12 @@ class ResultController extends BaseController {
     }
   }
 
+  void applyEditedResult(OcrResultModel updated) {
+    result.value = updated;
+    result.refresh();
+    _uploadController.setOcrResult(updated.toOcrMap());
+  }
+
   Future<void> saveDocument() async {
     final current = result.value;
     if (current == null || isSaving.value || isExporting) return;
@@ -193,11 +199,6 @@ class ResultController extends BaseController {
   Future<void> exportWord() => _export(_ResultExportKind.word);
 
   Future<void> exportExcel() => _export(_ResultExportKind.excel);
-
-  void applyEditedResult(OcrResultModel updated) {
-    result.value = updated;
-    _uploadController.setOcrResult(updated.toOcrMap());
-  }
 
   /// Maps an OCR result to local history.
   ///
