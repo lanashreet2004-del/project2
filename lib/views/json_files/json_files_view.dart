@@ -21,16 +21,18 @@ class JsonFilesView extends GetView<JsonFilesController> {
         title: Text('jsonFiles.title'.tr),
       ),
       body: Obx(
-        () => AsyncStateBuilder(
-          isLoading: controller.isLoading.value,
-          errorMessage: controller.errorMessage.value,
-          onRetry: controller.loadJsonFiles,
-          builder: (context) {
-            final files = controller.jsonFiles;
-
-            if (files.isEmpty) {
-              return _EmptyJsonFilesState(onHomeTap: controller.goHome);
-            }
+        () {
+          final isLoading = controller.isLoading.value;
+          final errorMessage = controller.errorMessage.value;
+          final files = controller.jsonFiles.toList(growable: false);
+          return AsyncStateBuilder(
+            isLoading: isLoading,
+            errorMessage: errorMessage,
+            onRetry: controller.loadJsonFiles,
+            builder: (context) {
+              if (files.isEmpty) {
+                return _EmptyJsonFilesState(onHomeTap: controller.goHome);
+              }
 
             return ResponsiveContainer(
               maxWidth: 800,
@@ -54,7 +56,8 @@ class JsonFilesView extends GetView<JsonFilesController> {
               ),
             );
           },
-        ),
+        );
+        },
       ),
     );
   }

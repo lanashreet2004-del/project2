@@ -7,10 +7,6 @@ import '../../repositories/ocr_repository.dart';
 import '../../repositories/result_repository.dart';
 import '../../repositories/upload_repository.dart';
 import '../../controllers/upload_controller.dart';
-import '../../controllers/excel_files_controller.dart';
-import '../../controllers/json_files_controller.dart';
-import '../../controllers/pdf_files_controller.dart';
-import '../../controllers/word_files_controller.dart';
 import '../../repositories/auth_repository.dart';
 import '../../repositories/json_export_repository.dart';
 import '../../repositories/json_files_repository.dart';
@@ -24,6 +20,7 @@ import '../../repositories/onboarding_repository.dart';
 import '../../repositories/text_edit_repository.dart';
 import '../services/api_service.dart';
 import '../services/storage_service.dart';
+import '../utils/generated_files_session.dart';
 import '../localization/locale_controller.dart';
 
 /// Registers global services and repositories for dependency injection.
@@ -47,20 +44,8 @@ class InitialBinding extends Bindings {
     final authRepository = Get.find<AuthRepository>();
     authRepository.restoreSession();
     apiService.onUnauthorized = authRepository.handleUnauthorized;
-    authRepository.onSessionChanged = () async {
-      if (Get.isRegistered<PdfFilesController>()) {
-        await Get.find<PdfFilesController>().loadPdfFiles();
-      }
-      if (Get.isRegistered<WordFilesController>()) {
-        await Get.find<WordFilesController>().loadWordFiles();
-      }
-      if (Get.isRegistered<ExcelFilesController>()) {
-        await Get.find<ExcelFilesController>().loadExcelFiles();
-      }
-      if (Get.isRegistered<JsonFilesController>()) {
-        await Get.find<JsonFilesController>().loadJsonFiles();
-      }
-    };
+    authRepository.onSessionChanged =
+        GeneratedFilesSession.onAuthenticatedUserChanged;
 
     Get.put<LocaleController>(
       LocaleController(storageService: storageService),

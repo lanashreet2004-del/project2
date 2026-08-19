@@ -4,9 +4,10 @@ import '../models/word_file_model.dart';
 import '../repositories/word_files_repository.dart';
 import '../core/navigation/main_navigation.dart';
 import 'base_controller.dart';
+import 'scoped_file_list_mixin.dart';
 
 /// Presentation logic for the local Word Files library.
-class WordFilesController extends BaseController {
+class WordFilesController extends BaseController with ScopedFileListMixin {
   WordFilesController({required WordFilesRepository repository})
       : _repository = repository;
 
@@ -20,9 +21,10 @@ class WordFilesController extends BaseController {
     loadWordFiles();
   }
 
-  Future<void> loadWordFiles() async {
-    final data = await runAsync(() => _repository.getWordFiles());
-    wordFiles.assignAll(data ?? const []);
+  void clearFiles() => clearScopedList(wordFiles);
+
+  Future<void> loadWordFiles() {
+    return reloadScopedList(wordFiles, _repository.getWordFiles);
   }
 
   Future<void> openWord(WordFileModel item) async {

@@ -21,16 +21,18 @@ class ExcelFilesView extends GetView<ExcelFilesController> {
         title: Text('excelFiles.title'.tr),
       ),
       body: Obx(
-        () => AsyncStateBuilder(
-          isLoading: controller.isLoading.value,
-          errorMessage: controller.errorMessage.value,
-          onRetry: controller.loadExcelFiles,
-          builder: (context) {
-            final files = controller.excelFiles;
-
-            if (files.isEmpty) {
-              return _EmptyExcelFilesState(onHomeTap: controller.goHome);
-            }
+        () {
+          final isLoading = controller.isLoading.value;
+          final errorMessage = controller.errorMessage.value;
+          final files = controller.excelFiles.toList(growable: false);
+          return AsyncStateBuilder(
+            isLoading: isLoading,
+            errorMessage: errorMessage,
+            onRetry: controller.loadExcelFiles,
+            builder: (context) {
+              if (files.isEmpty) {
+                return _EmptyExcelFilesState(onHomeTap: controller.goHome);
+              }
 
             return ResponsiveContainer(
               maxWidth: 800,
@@ -54,7 +56,8 @@ class ExcelFilesView extends GetView<ExcelFilesController> {
               ),
             );
           },
-        ),
+        );
+        },
       ),
     );
   }

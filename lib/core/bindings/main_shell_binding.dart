@@ -25,11 +25,15 @@ class MainShellBinding extends Bindings {
       ),
     );
 
-    Get.lazyPut<PdfFilesController>(
-      () => PdfFilesController(
-        repository: Get.find<PdfFilesRepository>(),
-      ),
-    );
+    if (Get.isRegistered<PdfFilesController>()) {
+      Get.find<PdfFilesController>().loadPdfFiles();
+    } else {
+      Get.lazyPut<PdfFilesController>(
+        () => PdfFilesController(
+          repository: Get.find<PdfFilesRepository>(),
+        ),
+      );
+    }
 
     Get.lazyPut<SettingsController>(
       () => SettingsController(

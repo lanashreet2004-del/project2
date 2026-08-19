@@ -4,9 +4,10 @@ import '../models/pdf_file_model.dart';
 import '../repositories/pdf_files_repository.dart';
 import '../core/navigation/main_navigation.dart';
 import 'base_controller.dart';
+import 'scoped_file_list_mixin.dart';
 
 /// Presentation logic for the local PDF Files library.
-class PdfFilesController extends BaseController {
+class PdfFilesController extends BaseController with ScopedFileListMixin {
   PdfFilesController({required PdfFilesRepository repository})
       : _repository = repository;
 
@@ -20,9 +21,10 @@ class PdfFilesController extends BaseController {
     loadPdfFiles();
   }
 
-  Future<void> loadPdfFiles() async {
-    final data = await runAsync(() => _repository.getPdfFiles());
-    pdfFiles.assignAll(data ?? const []);
+  void clearFiles() => clearScopedList(pdfFiles);
+
+  Future<void> loadPdfFiles() {
+    return reloadScopedList(pdfFiles, _repository.getPdfFiles);
   }
 
   Future<void> openPdf(PdfFileModel item) async {

@@ -22,16 +22,18 @@ class PdfFilesView extends GetView<PdfFilesController> {
         automaticallyImplyLeading: false,
       ),
       body: Obx(
-        () => AsyncStateBuilder(
-          isLoading: controller.isLoading.value,
-          errorMessage: controller.errorMessage.value,
-          onRetry: controller.loadPdfFiles,
-          builder: (context) {
-            final files = controller.pdfFiles;
-
-            if (files.isEmpty) {
-              return _EmptyPdfFilesState(onHomeTap: controller.goHome);
-            }
+        () {
+          final isLoading = controller.isLoading.value;
+          final errorMessage = controller.errorMessage.value;
+          final files = controller.pdfFiles.toList(growable: false);
+          return AsyncStateBuilder(
+            isLoading: isLoading,
+            errorMessage: errorMessage,
+            onRetry: controller.loadPdfFiles,
+            builder: (context) {
+              if (files.isEmpty) {
+                return _EmptyPdfFilesState(onHomeTap: controller.goHome);
+              }
 
             return ResponsiveContainer(
               maxWidth: 800,
@@ -55,7 +57,8 @@ class PdfFilesView extends GetView<PdfFilesController> {
               ),
             );
           },
-        ),
+        );
+        },
       ),
     );
   }

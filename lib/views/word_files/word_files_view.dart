@@ -21,16 +21,18 @@ class WordFilesView extends GetView<WordFilesController> {
         title: Text('wordFiles.title'.tr),
       ),
       body: Obx(
-        () => AsyncStateBuilder(
-          isLoading: controller.isLoading.value,
-          errorMessage: controller.errorMessage.value,
-          onRetry: controller.loadWordFiles,
-          builder: (context) {
-            final files = controller.wordFiles;
-
-            if (files.isEmpty) {
-              return _EmptyWordFilesState(onHomeTap: controller.goHome);
-            }
+        () {
+          final isLoading = controller.isLoading.value;
+          final errorMessage = controller.errorMessage.value;
+          final files = controller.wordFiles.toList(growable: false);
+          return AsyncStateBuilder(
+            isLoading: isLoading,
+            errorMessage: errorMessage,
+            onRetry: controller.loadWordFiles,
+            builder: (context) {
+              if (files.isEmpty) {
+                return _EmptyWordFilesState(onHomeTap: controller.goHome);
+              }
 
             return ResponsiveContainer(
               maxWidth: 800,
@@ -54,7 +56,8 @@ class WordFilesView extends GetView<WordFilesController> {
               ),
             );
           },
-        ),
+        );
+        },
       ),
     );
   }

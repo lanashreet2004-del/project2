@@ -4,9 +4,10 @@ import '../models/json_file_model.dart';
 import '../repositories/json_files_repository.dart';
 import '../core/navigation/main_navigation.dart';
 import 'base_controller.dart';
+import 'scoped_file_list_mixin.dart';
 
 /// Presentation logic for the local JSON Files library.
-class JsonFilesController extends BaseController {
+class JsonFilesController extends BaseController with ScopedFileListMixin {
   JsonFilesController({required JsonFilesRepository repository})
       : _repository = repository;
 
@@ -20,9 +21,10 @@ class JsonFilesController extends BaseController {
     loadJsonFiles();
   }
 
-  Future<void> loadJsonFiles() async {
-    final data = await runAsync(() => _repository.getJsonFiles());
-    jsonFiles.assignAll(data ?? const []);
+  void clearFiles() => clearScopedList(jsonFiles);
+
+  Future<void> loadJsonFiles() {
+    return reloadScopedList(jsonFiles, _repository.getJsonFiles);
   }
 
   Future<void> openJson(JsonFileModel item) async {

@@ -4,9 +4,10 @@ import '../models/excel_file_model.dart';
 import '../repositories/excel_files_repository.dart';
 import '../core/navigation/main_navigation.dart';
 import 'base_controller.dart';
+import 'scoped_file_list_mixin.dart';
 
 /// Presentation logic for the local Excel Files library.
-class ExcelFilesController extends BaseController {
+class ExcelFilesController extends BaseController with ScopedFileListMixin {
   ExcelFilesController({required ExcelFilesRepository repository})
       : _repository = repository;
 
@@ -20,9 +21,10 @@ class ExcelFilesController extends BaseController {
     loadExcelFiles();
   }
 
-  Future<void> loadExcelFiles() async {
-    final data = await runAsync(() => _repository.getExcelFiles());
-    excelFiles.assignAll(data ?? const []);
+  void clearFiles() => clearScopedList(excelFiles);
+
+  Future<void> loadExcelFiles() {
+    return reloadScopedList(excelFiles, _repository.getExcelFiles);
   }
 
   Future<void> openExcel(ExcelFileModel item) async {
