@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_theme_context.dart';
 import 'camera_card_widget.dart';
 import 'gallery_card_widget.dart';
@@ -32,7 +33,7 @@ class UploadOptionsWidget extends StatelessWidget {
             height: 1.3,
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: AppSpacing.md),
         Row(
           children: [
             Expanded(child: GalleryCardWidget(onTap: onGalleryTap)),
@@ -40,7 +41,7 @@ class UploadOptionsWidget extends StatelessWidget {
             Expanded(child: CameraCardWidget(onTap: onCameraTap)),
           ],
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: AppSpacing.sm),
         MyDocumentsCardWidget(onTap: onDocumentsTap),
       ],
     );

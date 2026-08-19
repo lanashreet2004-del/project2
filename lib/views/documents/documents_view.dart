@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import '../../controllers/documents_controller.dart';
 import '../../core/theme/app_theme_context.dart';
+import '../../core/widgets/app_empty_state.dart';
 import '../../core/widgets/async_state_builder.dart';
 import '../../core/widgets/responsive_layout.dart';
 import '../../core/widgets/wavy_app_bar.dart';
@@ -43,8 +44,13 @@ class DocumentsView extends GetView<DocumentsController> {
             final documents = controller.documents;
 
             if (documents.isEmpty) {
-              return _EmptyDocumentsState(
-                onScanTap: controller.scanNewDocument,
+              return AppEmptyState(
+                icon: Icons.folder_open_outlined,
+                title: 'documents.emptyTitle'.tr,
+                body: 'documents.emptyBody'.tr,
+                actionLabel: 'documents.scanNew'.tr,
+                actionIcon: Icons.document_scanner_outlined,
+                onAction: controller.scanNewDocument,
               );
             }
 
@@ -124,72 +130,5 @@ class DocumentsView extends GetView<DocumentsController> {
     if (confirmed == true) {
       await controller.clearAll();
     }
-  }
-}
-
-class _EmptyDocumentsState extends StatelessWidget {
-  const _EmptyDocumentsState({required this.onScanTap});
-
-  final VoidCallback onScanTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 32),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 96,
-              height: 96,
-              decoration: BoxDecoration(
-                color: context.appColors.iconSoft,
-                borderRadius: BorderRadius.circular(24),
-              ),
-              child: Icon(
-                Icons.folder_open_outlined,
-                size: 48,
-                color: context.colors.primary.withValues(alpha: 0.8),
-              ),
-            ),
-            const SizedBox(height: 24),
-            Text(
-              'documents.emptyTitle'.tr,
-              style: context.texts.titleLarge?.copyWith(
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              'documents.emptyBody'.tr,
-              textAlign: TextAlign.center,
-              style: context.texts.bodyMedium?.copyWith(
-                color: context.colors.onSurfaceVariant,
-                height: 1.5,
-              ),
-            ),
-            const SizedBox(height: 28),
-            SizedBox(
-              height: 48,
-              child: FilledButton.icon(
-                onPressed: onScanTap,
-                icon: const Icon(Icons.document_scanner_outlined),
-                label: Text(
-                  'documents.scanNew'.tr,
-                  style: const TextStyle(fontWeight: FontWeight.w600),
-                ),
-                style: FilledButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }

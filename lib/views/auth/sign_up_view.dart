@@ -25,7 +25,7 @@ class SignUpView extends GetView<AuthController> {
           child: LayoutBuilder(
             builder: (context, constraints) {
               return SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(8, 16, 8, 32),
+                padding: const EdgeInsets.fromLTRB(8, 8, 8, 32),
                 child: ConstrainedBox(
                   constraints: BoxConstraints(
                     minHeight: constraints.maxHeight - 48,

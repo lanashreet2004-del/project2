@@ -63,8 +63,17 @@ class TextEditorView extends GetView<TextEditorController> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   if (controller.hasChanges.value)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
+                    Container(
+                      width: double.infinity,
+                      margin: const EdgeInsets.only(bottom: 12),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 10,
+                      ),
+                      decoration: BoxDecoration(
+                        color: context.appColors.accentSoft,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                       child: Text(
                         'textEditor.unsavedTitle'.tr,
                         style: context.texts.labelMedium?.copyWith(
@@ -85,8 +94,8 @@ class TextEditorView extends GetView<TextEditorController> {
                         textDirection: TextDirection.rtl,
                         keyboardType: TextInputType.multiline,
                         style: context.texts.bodyLarge?.copyWith(
-                          height: 1.8,
-                          letterSpacing: 0.2,
+                          height: 1.85,
+                          letterSpacing: 0.15,
                         ),
                         decoration: InputDecoration(
                           hintText: 'textEditor.hint'.tr,
@@ -96,6 +105,19 @@ class TextEditorView extends GetView<TextEditorController> {
                           fillColor: context.colors.surface,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(16),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            borderSide: BorderSide(
+                              color: context.appColors.cardBorder,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            borderSide: BorderSide(
+                              color: context.colors.primary,
+                              width: 1.5,
+                            ),
                           ),
                           contentPadding: const EdgeInsets.all(20),
                         ),

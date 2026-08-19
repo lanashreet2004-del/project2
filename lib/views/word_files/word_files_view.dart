@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import '../../controllers/word_files_controller.dart';
 import '../../core/localization/display_helpers.dart';
 import '../../core/theme/app_theme_context.dart';
+import '../../core/widgets/app_empty_state.dart';
+import '../../core/widgets/app_library_file_tile.dart';
 import '../../core/widgets/async_state_builder.dart';
 import '../../core/widgets/responsive_layout.dart';
 import '../../core/widgets/wavy_app_bar.dart';
@@ -31,32 +33,48 @@ class WordFilesView extends GetView<WordFilesController> {
             onRetry: controller.loadWordFiles,
             builder: (context) {
               if (files.isEmpty) {
-                return _EmptyWordFilesState(onHomeTap: controller.goHome);
+                return AppEmptyState(
+                  icon: Icons.description_outlined,
+                  title: 'wordFiles.emptyTitle'.tr,
+                  body: 'wordFiles.emptyBody'.tr,
+                  actionLabel: 'common.goHome'.tr,
+                  actionIcon: Icons.home_outlined,
+                  onAction: controller.goHome,
+                );
               }
 
-            return ResponsiveContainer(
-              maxWidth: 800,
-              child: RefreshIndicator(
-                onRefresh: controller.loadWordFiles,
-                child: ListView.separated(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-                  itemCount: files.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 10),
-                  itemBuilder: (context, index) {
-                    final item = files[index];
-                    return _WordFileTile(
-                      item: item,
-                      onOpen: () => _handleOpen(context, item),
-                      onShare: () => controller.shareWord(item),
-                      onDelete: () => _confirmDelete(context, item),
-                    );
-                  },
+              return ResponsiveContainer(
+                maxWidth: 800,
+                child: RefreshIndicator(
+                  onRefresh: controller.loadWordFiles,
+                  child: ListView.separated(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+                    itemCount: files.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 10),
+                    itemBuilder: (context, index) {
+                      final item = files[index];
+                      return AppLibraryFileTile(
+                        fileName: item.fileName,
+                        subtitle: item.documentTitle.trim().isEmpty
+                            ? item.fileName
+                            : displayDocumentTitle(item.documentTitle),
+                        meta:
+                            '${AppLibraryFileTile.formatDate(item.exportedAt)} • ${AppLibraryFileTile.formatSize(item.fileSizeBytes)}',
+                        icon: Icons.description_outlined,
+                        iconColor: context.colors.primary,
+                        iconBackground: context.appColors.iconSoft,
+                        actionsTooltip: 'wordFiles.actions'.tr,
+                        onOpen: () => _handleOpen(context, item),
+                        onShare: () => controller.shareWord(item),
+                        onDelete: () => _confirmDelete(context, item),
+                      );
+                    },
+                  ),
                 ),
-              ),
-            );
-          },
-        );
+              );
+            },
+          );
         },
       ),
     );
@@ -127,190 +145,5 @@ class WordFilesView extends GetView<WordFilesController> {
     if (confirmed == true) {
       await controller.deleteWord(item.id);
     }
-  }
-}
-
-class _WordFileTile extends StatelessWidget {
-  const _WordFileTile({
-    required this.item,
-    required this.onOpen,
-    required this.onShare,
-    required this.onDelete,
-  });
-
-  final WordFileModel item;
-  final VoidCallback onOpen;
-  final VoidCallback onShare;
-  final VoidCallback onDelete;
-
-  @override
-  Widget build(BuildContext context) {
-    final dateLabel = _formatExportDate(item.exportedAt);
-    final sizeLabel = _formatFileSize(item.fileSizeBytes);
-    final subtitle = item.documentTitle.trim().isEmpty
-        ? item.fileName
-        : displayDocumentTitle(item.documentTitle);
-
-    return Card(
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onOpen,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-          child: Row(
-            children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: context.appColors.iconSoft,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  Icons.description_outlined,
-                  color: context.colors.primary,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      item.fileName,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: context.texts.titleSmall?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      subtitle,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: context.texts.bodySmall?.copyWith(
-                        color: context.colors.onSurfaceVariant,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '$dateLabel • $sizeLabel',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: context.texts.labelSmall?.copyWith(
-                        color: context.colors.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              PopupMenuButton<_WordAction>(
-                tooltip: 'wordFiles.actions'.tr,
-                onSelected: (action) {
-                  switch (action) {
-                    case _WordAction.open:
-                      onOpen();
-                    case _WordAction.share:
-                      onShare();
-                    case _WordAction.delete:
-                      onDelete();
-                  }
-                },
-                itemBuilder: (context) => [
-                  PopupMenuItem(
-                    value: _WordAction.open,
-                    child: Text('common.open'.tr),
-                  ),
-                  PopupMenuItem(
-                    value: _WordAction.share,
-                    child: Text('common.share'.tr),
-                  ),
-                  PopupMenuItem(
-                    value: _WordAction.delete,
-                    child: Text('common.delete'.tr),
-                  ),
-                ],
-                icon: Icon(
-                  Icons.more_vert,
-                  color: context.colors.onSurfaceVariant,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  String _formatExportDate(DateTime dateTime) {
-    final day = dateTime.day.toString().padLeft(2, '0');
-    final month = dateTime.month.toString().padLeft(2, '0');
-    final year = dateTime.year;
-    final hour = dateTime.hour.toString().padLeft(2, '0');
-    final minute = dateTime.minute.toString().padLeft(2, '0');
-    return '$day/$month/$year • $hour:$minute';
-  }
-
-  String _formatFileSize(int bytes) {
-    if (bytes <= 0) return '—';
-    const kb = 1024;
-    const mb = 1024 * 1024;
-    if (bytes >= mb) {
-      return '${(bytes / mb).toStringAsFixed(1)} MB';
-    }
-    if (bytes >= kb) {
-      return '${(bytes / kb).toStringAsFixed(1)} KB';
-    }
-    return '$bytes B';
-  }
-}
-
-enum _WordAction { open, share, delete }
-
-class _EmptyWordFilesState extends StatelessWidget {
-  const _EmptyWordFilesState({required this.onHomeTap});
-
-  final VoidCallback onHomeTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 32),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.description_outlined,
-              size: 64,
-              color: context.colors.onSurfaceVariant.withValues(alpha: 0.55),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'wordFiles.emptyTitle'.tr,
-              textAlign: TextAlign.center,
-              style: context.texts.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'wordFiles.emptyBody'.tr,
-              textAlign: TextAlign.center,
-              style: context.texts.bodyMedium?.copyWith(
-                color: context.colors.onSurfaceVariant,
-              ),
-            ),
-            const SizedBox(height: 24),
-            FilledButton.icon(
-              onPressed: onHomeTap,
-              icon: const Icon(Icons.home_outlined),
-              label: Text('common.goHome'.tr),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }

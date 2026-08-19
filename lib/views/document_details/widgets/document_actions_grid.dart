@@ -49,7 +49,7 @@ class DocumentActionsGrid extends StatelessWidget {
           physics: const NeverScrollableScrollPhysics(),
           mainAxisSpacing: 12,
           crossAxisSpacing: 12,
-          childAspectRatio: 1.45,
+          childAspectRatio: 1.5,
           children: actions.map((action) => _ActionTile(action: action)).toList(),
         ),
       ],

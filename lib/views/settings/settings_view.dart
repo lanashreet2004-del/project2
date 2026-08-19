@@ -38,6 +38,8 @@ class SettingsView extends GetView<SettingsController> {
                 'settings.account'.tr,
                 style: context.texts.titleSmall?.copyWith(
                   color: context.colors.onSurfaceVariant,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.2,
                 ),
               ),
               const SizedBox(height: 10),
@@ -102,6 +104,8 @@ class SettingsView extends GetView<SettingsController> {
                 'settings.appearance'.tr,
                 style: context.texts.titleSmall?.copyWith(
                   color: context.colors.onSurfaceVariant,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.2,
                 ),
               ),
               const SizedBox(height: 10),
@@ -170,6 +174,8 @@ class SettingsView extends GetView<SettingsController> {
                 'settings.language'.tr,
                 style: context.texts.titleSmall?.copyWith(
                   color: context.colors.onSurfaceVariant,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.2,
                 ),
               ),
               const SizedBox(height: 10),
@@ -184,6 +190,8 @@ class SettingsView extends GetView<SettingsController> {
                 'settings.about'.tr,
                 style: context.texts.titleSmall?.copyWith(
                   color: context.colors.onSurfaceVariant,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.2,
                 ),
               ),
               const SizedBox(height: 10),

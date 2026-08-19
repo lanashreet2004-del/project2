@@ -3,16 +3,17 @@ import 'package:flutter/services.dart';
 
 import 'app_colors.dart';
 import 'app_fonts.dart';
+import 'app_spacing.dart';
 
 /// Material 3 light/dark themes with locale-aware typography and component styles.
 class AppTheme {
   AppTheme._();
 
-  static const double radiusSm = 10;
-  static const double radiusMd = 12;
+  static const double radiusSm = AppRadii.sm;
+  static const double radiusMd = AppRadii.md;
   static const double radiusLg = 14;
-  static const double radiusXl = 16;
-  static const double buttonHeight = 48;
+  static const double radiusXl = AppRadii.lg;
+  static const double buttonHeight = 52;
 
   static ThemeData light({required bool isArabic}) =>
       _build(Brightness.light, isArabic: isArabic);
@@ -59,6 +60,7 @@ class AppTheme {
         elevation: 0,
         color: colorScheme.surface,
         surfaceTintColor: Colors.transparent,
+        clipBehavior: Clip.antiAlias,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(radiusLg),
           side: BorderSide(color: semantics.cardBorder),
@@ -73,7 +75,7 @@ class AppTheme {
         backgroundColor: isDark ? AppColors.darkElevated : colorScheme.surface,
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(radiusXl),
+          borderRadius: BorderRadius.circular(AppRadii.xl),
         ),
         titleTextStyle: textTheme.titleLarge?.copyWith(
           fontWeight: FontWeight.w700,
@@ -81,14 +83,15 @@ class AppTheme {
         ),
         contentTextStyle: textTheme.bodyMedium?.copyWith(
           color: colorScheme.onSurfaceVariant,
-          height: 1.45,
+          height: 1.5,
         ),
+        actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
       ),
       bottomSheetTheme: BottomSheetThemeData(
         backgroundColor: isDark ? AppColors.darkElevated : colorScheme.surface,
         surfaceTintColor: Colors.transparent,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        shape: RoundedRectangleBorder(
+          borderRadius: AppRadii.sheetTop,
         ),
       ),
       snackBarTheme: SnackBarThemeData(
@@ -110,12 +113,15 @@ class AppTheme {
       listTileTheme: ListTileThemeData(
         iconColor: colorScheme.onSurfaceVariant,
         textColor: colorScheme.onSurface,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+        minVerticalPadding: 10,
         titleTextStyle: textTheme.titleSmall?.copyWith(
           fontWeight: FontWeight.w600,
           color: colorScheme.onSurface,
         ),
         subtitleTextStyle: textTheme.bodySmall?.copyWith(
           color: colorScheme.onSurfaceVariant,
+          height: 1.35,
         ),
       ),
       switchTheme: SwitchThemeData(
@@ -184,19 +190,19 @@ class AppTheme {
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
-          minimumSize: const Size(0, buttonHeight),
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          minimumSize: const Size(48, buttonHeight),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(radiusLg),
           ),
           textStyle: textTheme.labelLarge?.copyWith(
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w700,
           ),
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          minimumSize: const Size(0, buttonHeight),
+          minimumSize: const Size(48, buttonHeight),
           elevation: 0,
           backgroundColor: colorScheme.primary,
           foregroundColor: colorScheme.onPrimary,
@@ -204,20 +210,20 @@ class AppTheme {
             borderRadius: BorderRadius.circular(radiusLg),
           ),
           textStyle: textTheme.labelLarge?.copyWith(
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w700,
           ),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          minimumSize: const Size(0, buttonHeight),
+          minimumSize: const Size(48, buttonHeight),
           foregroundColor: colorScheme.primary,
           side: BorderSide(color: colorScheme.outline),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(radiusLg),
           ),
           textStyle: textTheme.labelLarge?.copyWith(
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w700,
           ),
         ),
       ),
@@ -242,6 +248,50 @@ class AppTheme {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(radiusSm),
         ),
+      ),
+      popupMenuTheme: PopupMenuThemeData(
+        color: isDark ? AppColors.darkElevated : colorScheme.surface,
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(radiusMd),
+        ),
+        elevation: 4,
+        textStyle: textTheme.bodyMedium,
+      ),
+      tooltipTheme: TooltipThemeData(
+        decoration: BoxDecoration(
+          color: isDark ? AppColors.darkElevated : AppColors.neutralGrayDark,
+          borderRadius: BorderRadius.circular(radiusSm),
+        ),
+        textStyle: textTheme.labelSmall?.copyWith(color: Colors.white),
+        waitDuration: const Duration(milliseconds: 400),
+      ),
+      menuTheme: MenuThemeData(
+        style: MenuStyle(
+          backgroundColor: WidgetStatePropertyAll(
+            isDark ? AppColors.darkElevated : colorScheme.surface,
+          ),
+          shape: WidgetStatePropertyAll(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(radiusMd),
+            ),
+          ),
+        ),
+      ),
+      segmentedButtonTheme: SegmentedButtonThemeData(
+        style: ButtonStyle(
+          visualDensity: VisualDensity.compact,
+          textStyle: WidgetStatePropertyAll(
+            textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w600),
+          ),
+        ),
+      ),
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: {
+          TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
+          TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.windows: FadeUpwardsPageTransitionsBuilder(),
+        },
       ),
     );
   }

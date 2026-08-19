@@ -44,9 +44,9 @@ class AppColors {
   static const Color lightBrandSoft = Color(0xFFE8F0EA);
   static const Color lightIconSoft = Color(0xFFEDF2EE);
   static const Color lightAccentSoft = Color(0xFFF7F1DF);
-  static const Color lightBorder = Color(0xFFE2E6E3);
+  static const Color lightBorder = Color(0xFFE4E9E5);
   /// Soft brand-green outline for cards.
-  static const Color lightCardBorder = Color(0xFFA8C4B0);
+  static const Color lightCardBorder = Color(0xFFC9D6CD);
   static const Color lightDivider = Color(0xFFE8ECE9);
   static const Color lightTextPrimary = Color(0xFF1F2937);
   static const Color lightTextSecondary = Color(0xFF6B7280);

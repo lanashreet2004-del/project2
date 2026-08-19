@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_theme_context.dart';
 
 class MaktubBottomNavItem {
@@ -34,7 +35,6 @@ class MaktubBottomNavBar extends StatelessWidget {
     final bottomInset = MediaQuery.paddingOf(context).bottom;
     final barGreen = context.appColors.appBarBackground;
     final onBar = context.appColors.onAppBar;
-    final shadow = Colors.black.withValues(alpha: context.isDark ? 0.45 : 0.22);
 
     return Material(
       color: Colors.transparent,
@@ -48,20 +48,8 @@ class MaktubBottomNavBar extends StatelessWidget {
         child: DecoratedBox(
           decoration: BoxDecoration(
             color: barGreen,
-            borderRadius: BorderRadius.circular(28),
-            boxShadow: [
-              BoxShadow(
-                color: shadow,
-                blurRadius: 22,
-                offset: const Offset(0, 8),
-                spreadRadius: -2,
-              ),
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.08),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
+            borderRadius: BorderRadius.circular(22),
+            boxShadow: AppShadows.bar(context, isDark: context.isDark),
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),

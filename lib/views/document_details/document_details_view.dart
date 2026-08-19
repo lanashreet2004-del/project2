@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import '../../controllers/document_details_controller.dart';
 import '../../core/theme/app_theme_context.dart';
+import '../../core/widgets/app_empty_state.dart';
 import '../../core/widgets/responsive_layout.dart';
 import '../../core/widgets/wavy_app_bar.dart';
 import 'widgets/document_actions_grid.dart';
@@ -22,7 +23,7 @@ class DocumentDetailsView extends GetView<DocumentDetailsController> {
         title: Text('details.title'.tr),
         actions: [
           IconButton(
-            icon: const Icon(Icons.delete_outline,color: Colors.red),
+            icon: const Icon(Icons.delete_outline_rounded),
             tooltip: 'common.delete'.tr,
             onPressed: () => _confirmDelete(context),
           ),
@@ -31,7 +32,11 @@ class DocumentDetailsView extends GetView<DocumentDetailsController> {
       body: Obx(() {
         final document = controller.document.value;
         if (document == null) {
-          return Center(child: Text('details.notFound'.tr));
+          return AppEmptyState(
+            icon: Icons.description_outlined,
+            title: 'details.notFound'.tr,
+            body: 'details.notFound'.tr,
+          );
         }
 
         final exporting = controller.isExportingPdf.value ||

@@ -4,14 +4,15 @@ import 'package:get/get.dart';
 
 import '../../controllers/splash_controller.dart';
 import '../../core/constants/app_constants.dart';
+import '../../core/theme/app_colors.dart';
 
 /// Splash matching the SATR · OCR green/gold intro design.
 class SplashView extends GetView<SplashController> {
   const SplashView({super.key});
 
-  static const _bgTop = Color(0xFF163E2A);
-  static const _bgMid = Color(0xFF1F4F36);
-  static const _bgBottom = Color(0xFF2A6342);
+  static const _bgTop = AppColors.actionGreenDark;
+  static const _bgMid = AppColors.actionGreen;
+  static const _bgBottom = AppColors.actionGreenLight;
 
   @override
   Widget build(BuildContext context) {

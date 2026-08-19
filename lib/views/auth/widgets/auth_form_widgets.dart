@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_theme_context.dart';
 import '../../../core/widgets/app_logo_placeholder.dart';
 
@@ -43,8 +45,8 @@ class AuthHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const AppLogoPlaceholder(size: 72, iconSize: 32),
-        const SizedBox(height: 16),
+        const AppLogoPlaceholder(size: 80, iconSize: 36),
+        const SizedBox(height: AppSpacing.md),
         Text(
           'app.name'.tr,
           style: context.texts.headlineSmall?.copyWith(
@@ -130,7 +132,7 @@ class AuthSubmitButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 48,
+      height: AppTheme.buttonHeight,
       width: double.infinity,
       child: FilledButton(
         onPressed: isLoading ? null : onPressed,

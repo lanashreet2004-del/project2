@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_theme_context.dart';
 import 'sun_illustration.dart';
 
@@ -19,13 +20,25 @@ class WelcomeCardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      padding: const EdgeInsets.fromLTRB(20, 18, 16, 18),
       decoration: BoxDecoration(
         color: context.appColors.brandSoft,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: AppRadii.lgAll,
+        border: Border.all(
+          color: context.colors.primary.withValues(alpha: 0.12),
+        ),
       ),
       child: Row(
         children: [
+          Container(
+            width: 4,
+            height: 56,
+            decoration: BoxDecoration(
+              color: context.appColors.accent,
+              borderRadius: BorderRadius.circular(4),
+            ),
+          ),
+          const SizedBox(width: AppSpacing.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -37,7 +50,7 @@ class WelcomeCardWidget extends StatelessWidget {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                const SizedBox(height: 6),
+                const SizedBox(height: AppSpacing.xxs),
                 RichText(
                   text: TextSpan(
                     style: context.texts.headlineSmall?.copyWith(
@@ -59,8 +72,8 @@ class WelcomeCardWidget extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(width: 8),
-          const SunIllustration(size: 72),
+          const SizedBox(width: AppSpacing.xs),
+          const SunIllustration(size: 68),
         ],
       ),
     );

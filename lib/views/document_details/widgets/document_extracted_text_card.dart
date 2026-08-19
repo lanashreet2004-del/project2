@@ -25,6 +25,15 @@ class DocumentExtractedTextCard extends StatelessWidget {
           children: [
             Row(
               children: [
+                Container(
+                  width: 4,
+                  height: 18,
+                  decoration: BoxDecoration(
+                    color: context.colors.primary,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+                const SizedBox(width: 10),
                 Expanded(
                   child: Text(
                     'details.extractedText'.tr,

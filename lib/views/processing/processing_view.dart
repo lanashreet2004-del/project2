@@ -38,7 +38,9 @@ class ProcessingView extends GetView<ProcessingController> {
             child: Center(
               child: Padding(
                 padding: const EdgeInsets.all(32),
-                child: Column(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 420),
+                  child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     _ProcessingAnimation(
@@ -116,6 +118,7 @@ class ProcessingView extends GetView<ProcessingController> {
               ),
             ),
           ),
+        ),
         ),
       );
     });

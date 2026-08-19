@@ -5,6 +5,7 @@ import '../../controllers/home_controller.dart';
 import '../../controllers/main_shell_controller.dart';
 import '../../core/localization/locale_controller.dart';
 import '../../core/navigation/main_tab.dart';
+import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_theme_context.dart';
 import '../../core/utils/responsive_utils.dart';
 import '../../core/widgets/responsive_layout.dart';
@@ -91,20 +92,20 @@ class HomeView extends GetView<HomeController> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const SizedBox(height: 8),
+                        const SizedBox(height: AppSpacing.xs),
                         Obx(
                           () => WelcomeCardWidget(
                             greeting: controller.greeting.value,
                             username: controller.username.value,
                           ),
                         ),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: AppSpacing.xl),
                         UploadOptionsWidget(
                           onGalleryTap: controller.pickFromGallery,
                           onCameraTap: controller.pickFromCamera,
                           onDocumentsTap: controller.openMyDocuments,
                         ),
-                        const SizedBox(height: 28),
+                        const SizedBox(height: AppSpacing.xl),
                         Obx(
                           () => RecentUploadsWidget(
                             documents: controller.recentDocuments.toList(),
@@ -112,7 +113,7 @@ class HomeView extends GetView<HomeController> {
                             onItemTap: controller.openDocument,
                           ),
                         ),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: AppSpacing.xl),
                       ],
                     ),
                   ),
