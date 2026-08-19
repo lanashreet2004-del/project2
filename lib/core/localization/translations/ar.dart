@@ -225,6 +225,10 @@ const Map<String, String> arTranslations = {
   'result.savedTitle': 'تم الحفظ',
   'result.savedBody': 'تم حفظ المستند في مستنداتي.',
   'result.saveFailed': 'تعذّر حفظ المستند.',
+  'result.export': 'تصدير',
+  'result.exportInvalidIdTitle': 'تعذّر التصدير',
+  'result.exportInvalidIdBody':
+      'هذه النتيجة غير متاحة للتصدير من الخادم بعد.',
 
   // Text editor
   'textEditor.title': 'تعديل النص',

@@ -225,6 +225,10 @@ const Map<String, String> enTranslations = {
   'result.savedTitle': 'Saved',
   'result.savedBody': 'Document saved to My Documents.',
   'result.saveFailed': 'Could not save document.',
+  'result.export': 'Export',
+  'result.exportInvalidIdTitle': 'Cannot export',
+  'result.exportInvalidIdBody':
+      'This OCR result is not available for server export yet.',
 
   // Text editor
   'textEditor.title': 'Edit Text',

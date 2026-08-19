@@ -22,9 +22,14 @@ class DocumentActionItem {
 }
 
 class DocumentActionsGrid extends StatelessWidget {
-  const DocumentActionsGrid({super.key, required this.actions});
+  const DocumentActionsGrid({
+    super.key,
+    required this.actions,
+    this.titleKey = 'details.quickActions',
+  });
 
   final List<DocumentActionItem> actions;
+  final String titleKey;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +37,7 @@ class DocumentActionsGrid extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'details.quickActions'.tr,
+          titleKey.tr,
           style: context.texts.titleMedium?.copyWith(
             fontWeight: FontWeight.w700,
           ),

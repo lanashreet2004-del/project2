@@ -6,6 +6,7 @@ import '../../core/theme/app_theme_context.dart';
 import '../../core/widgets/async_state_builder.dart';
 import '../../core/widgets/responsive_layout.dart';
 import '../../core/widgets/wavy_app_bar.dart';
+import '../document_details/widgets/document_actions_grid.dart';
 import 'widgets/result_extracted_text_card.dart';
 import 'widgets/result_image_preview.dart';
 import 'widgets/result_metadata_row.dart';
@@ -76,7 +77,8 @@ class ResultView extends GetView<ResultController> {
                       height: 52,
                       child: Obx(
                         () => FilledButton.icon(
-                          onPressed: controller.isSaving.value
+                          onPressed: controller.isSaving.value ||
+                                  controller.isExporting
                               ? null
                               : controller.saveDocument,
                           icon: controller.isSaving.value
@@ -109,21 +111,61 @@ class ResultView extends GetView<ResultController> {
                     const SizedBox(height: 12),
                     SizedBox(
                       height: 52,
-                      child: OutlinedButton.icon(
-                        onPressed: controller.openTextEditor,
-                        icon: const Icon(Icons.edit_outlined),
-                        label: Text(
-                          'result.editText'.tr,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
+                      child: Obx(
+                        () => OutlinedButton.icon(
+                          onPressed: controller.isSaving.value ||
+                                  controller.isExporting
+                              ? null
+                              : controller.openTextEditor,
+                          icon: const Icon(Icons.edit_outlined),
+                          label: Text(
+                            'result.editText'.tr,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          style: OutlinedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
+                            ),
                           ),
                         ),
-                        style: OutlinedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Obx(
+                      () => DocumentActionsGrid(
+                        titleKey: 'result.export',
+                        actions: [
+                          DocumentActionItem(
+                            label: 'details.exportPdf'.tr,
+                            icon: Icons.picture_as_pdf_outlined,
+                            isLoading: controller.isExportingPdf.value,
+                            isEnabled: !controller.isSaving.value &&
+                                !controller.isExportingWord.value &&
+                                !controller.isExportingExcel.value,
+                            onTap: controller.exportPdf,
                           ),
-                        ),
+                          DocumentActionItem(
+                            label: 'details.exportWord'.tr,
+                            icon: Icons.description_outlined,
+                            isLoading: controller.isExportingWord.value,
+                            isEnabled: !controller.isSaving.value &&
+                                !controller.isExportingPdf.value &&
+                                !controller.isExportingExcel.value,
+                            onTap: controller.exportWord,
+                          ),
+                          DocumentActionItem(
+                            label: 'details.exportExcel'.tr,
+                            icon: Icons.table_chart_outlined,
+                            isLoading: controller.isExportingExcel.value,
+                            isEnabled: !controller.isSaving.value &&
+                                !controller.isExportingPdf.value &&
+                                !controller.isExportingWord.value,
+                            onTap: controller.exportExcel,
+                          ),
+                        ],
                       ),
                     ),
                   ],
